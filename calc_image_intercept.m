@@ -1,4 +1,4 @@
-
+function [int_image_range, int_image_range_index] = calc_image_intercept(x0, y0)
 
 %��ּ������߳��ȣ�������߳��ȼ���image���ȷ�Χ
 width = floor(sum(sqrt(diff(x0).^2 + diff(y0).^2)));
