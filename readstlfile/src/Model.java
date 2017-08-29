@@ -1,9 +1,13 @@
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -11,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 public class Model {
 
@@ -102,7 +105,7 @@ public class Model {
 		FileWriter fileWriter = new FileWriter(file);
 		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 		PrintWriter printWriter = new PrintWriter(fileWriter);
-		
+
 		printWriter.println(this.vertexs.size());
 		for (int i = 0; i < this.vertexs.size(); i++) {
 			String string = String.format("%s,%s,%s", vertexs.get(i).x,
@@ -112,12 +115,34 @@ public class Model {
 
 		printWriter.println(this.faces.size());
 		for (int i = 0; i < this.faces.size(); i++) {
-			String string = String.format("%s,%s,%s", faces.get(i).vertexs.toArray());
+			String string = String.format("%s,%s,%s",
+					faces.get(i).vertexs.toArray());
 			printWriter.println(string);
 		}
-		
+
 		printWriter.flush();
 		printWriter.close();
+	}
+	public void saveModel2(String path) throws IOException {
+		File file = new File(path);
+		FileOutputStream fileOutputStream = new FileOutputStream(file);
+		BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+		DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
+		dataOutputStream.writeInt(this.vertexs.size());
+		for (int i = 0; i < this.vertexs.size(); i++) {
+			dataOutputStream.writeFloat(vertexs.get(i).x);
+			dataOutputStream.writeFloat(vertexs.get(i).y);
+			dataOutputStream.writeFloat(vertexs.get(i).z);
+		}
+
+		dataOutputStream.writeInt(this.faces.size());
+		for (int i = 0; i < this.faces.size(); i++) {
+			dataOutputStream.writeInt(faces.get(i).vertexs.get(0));
+			dataOutputStream.writeInt(faces.get(i).vertexs.get(1));
+			dataOutputStream.writeInt(faces.get(i).vertexs.get(2));
+		}
+		dataOutputStream.flush();
+		dataOutputStream.close();
 	}
 
 	static public int convertBytes2Integer(byte[] bytes) {
@@ -125,17 +150,34 @@ public class Model {
 			return 0;
 		}
 		int result = 0;
-		for (int i = 0; i < bytes.length; i++) {
-			result = result * 256 + bytes[bytes.length - 1 - i];
-		}
+		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4);
+		byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		byteBuffer.wrap(bytes);
+		byteBuffer.rewind();
+		result = byteBuffer.getInt();
 		return result;
 	}
 
+	static public void convertFromFolder(String path) throws FileNotFoundException, IOException {
+		File file = new File(path);
+		File[] files = file.listFiles();
+		if (files == null) {
+			return;
+		}
+		for (File file2 : files) {
+			if (file2.isDirectory()) {
+				convertFromFolder(file2.getAbsolutePath());
+			} else if (file2.getAbsolutePath().endsWith(".stl")) {
+				System.out.println(file2.getAbsolutePath());
+				Model model = new Model();
+				model.loadModel(file2.getAbsolutePath());
+				System.out.println(model.faces.size());
+				System.out.println(model.vertexIndexMap.size());
+				model.saveModel(file2.getAbsolutePath().replaceAll(".stl", ".dat"));
+			}
+		}
+	}
+
 	public static void main(String[] args) throws IOException {
-		Model model = new Model();
-		model.loadModel("F://Dent2-.stl");
-		System.out.println(model.faces.size());
-		System.out.println(model.vertexIndexMap.size());
-		model.saveModel("F://Dent2.dat");
 	}
 }
