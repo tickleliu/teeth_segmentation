@@ -1,5 +1,3 @@
-function int_image_range = fillhole(image)
-int_image_range = image;
 [width, heighth] = size(int_image_range);
 
 for i = scale + 1 : width - scale

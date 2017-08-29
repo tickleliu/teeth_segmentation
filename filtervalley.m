@@ -1,4 +1,3 @@
-function int_image_range2 = filtervalley(int_image_range)
 int_image_range2 = int_image_range;
 filter_coff = [2 1 -5 1 2];
 filter_coff = filter_coff ./ norm(filter_coff);

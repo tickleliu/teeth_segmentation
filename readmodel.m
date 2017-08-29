@@ -1,6 +1,5 @@
-function [faces, vertexs] = readmodel(path)
-
-fid = fopen(path);
+clear all;close all;clc;
+fid = fopen('Dent2.dat');
 %read vertex coordinate
 str_vertex_count = fgetl(fid);
 vertex_count = str2double(str_vertex_count);
