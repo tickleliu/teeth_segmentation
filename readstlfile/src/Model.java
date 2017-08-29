@@ -152,7 +152,7 @@ public class Model {
 		int result = 0;
 		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4);
 		byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		byteBuffer.wrap(bytes);
+		byteBuffer.put(bytes);
 		byteBuffer.rewind();
 		result = byteBuffer.getInt();
 		return result;
@@ -179,5 +179,10 @@ public class Model {
 	}
 
 	public static void main(String[] args) throws IOException {
+		Model model = new Model();
+		model.loadModel("F:\\Dent2-.stl");
+		System.out.println(model.faces.size());
+		System.out.println(model.vertexIndexMap.size());
+		model.saveModel2("F:\\Dent2.dat");
 	}
 }
