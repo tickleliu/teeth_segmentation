@@ -1,8 +1,8 @@
+function [proj_image] = calcDepth(faces, vertexs, f)
 %计算mesh中点到投影面距离
 % calc the vertex deepth
 % calc the tangent point
 %切点方程 f(x)f'(x)-y0f'(x)+x-x0=0;
-hold on;
 x = [length(f)-1:-1:1];
 f_derv = f(1:end-1).*x;%f'(x)
 f_f_derv = conv(f,f_derv);%f(x)f'(x)
@@ -42,7 +42,7 @@ for i = 1 : length(vertexs)
     res = roots(f_tangent);
     for j = 1:length(res)
         if abs(res(j)-xy(1)) < res_threshold && isreal(res(j))
-            vertexs_map_image(i,1:3) = [res(j), vertexs(i,3), norm([res(j), polyval(f,res(j))] - xy)];           
+            vertexs_map_image(i,1:3) = [res(j), vertexs(i,3), norm([res(j), polyval(f,res(j))] - xy)];
             break
         end
     end
