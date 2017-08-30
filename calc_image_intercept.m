@@ -1,23 +1,24 @@
-function [int_image_range, int_image_range_index] = calc_image_intercept(faces, vertexs, f)
-%¼ÆËãÑÀ³ÝÄ£ÐÍÍâ±íÃæÈ«¾ÖÍ¶Ó°
-%f£ºÐèÒªÍ¶Ó°µÄËÄ´ÎÇúÏß
-%¼ÆËãÑØ4´ÎÇúÏß·½ÏòÍ¶Ó°Ãæ³¤¶È
-x0 = [60:0.01:140];
+function [int_image_range, int_image_range_index] = calc_image_intercept(faces, vertexs, f, x0)
+%ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½Í¶Ó°
+%fï¿½ï¿½ï¿½ï¿½ÒªÍ¶Ó°ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½
+%ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½4ï¿½ï¿½ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½Í¶Ó°ï¿½æ³¤ï¿½ï¿½
 y0 = polyval(f,x0);
 width = floor(sum(sqrt(diff(x0).^2 + diff(y0).^2)));
 heighth = 15;
-scale = 5;%Í¶Ó°Ëõ·Å³ß¶È
-level_plane = 6; %³õÊ¼ÇÐ¸îË®Æ½ÏßÎ»ÖÃ
+scale = 5;%Í¶Ó°ï¿½ï¿½ï¿½Å³ß¶ï¿½
+minZ = min(vertexs(:,3));
+maxZ = max(vertexs(:,3));
+level_plane = (minZ + maxZ) / 3 * 2; %ï¿½ï¿½Ê¼ï¿½Ð¸ï¿½Ë®Æ½ï¿½ï¿½Î»ï¿½ï¿½
 
-%¼ÆËãËÄ´ÎÇúÃæÉÏµÈ¾àÀëµãµÄx£¬y×ø±ê
-%ÇÐµã·½³Ì f(x)f'(x)-y0f'(x)+x-x0=0;
+%ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÈ¾ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½yï¿½ï¿½ï¿½
+%ï¿½Ðµã·½ï¿½ï¿½ f(x)f'(x)-y0f'(x)+x-x0=0;
 x = [length(f)-1:-1:1];
 f_derv = f(1:end-1).*x;%f'(x)
 f_f_derv = conv(f,f_derv);%f(x)f'(x)
-delta_f_length = 1 / scale; %Ëõ·Å³ß¶È
-x1 = x0(1); %Í¶Ó°ÃæµÚÒ»¸öµã
-scale_normal = zeros(scale * width,3);%Í¶Ó°Ãæ·¨ÏòÁ¿?
-scale_x = zeros(scale * width,1);%4´ÎÆ½ÃæÉÏµÄx×ø±ê
+delta_f_length = 1 / scale; %ï¿½ï¿½ï¿½Å³ß¶ï¿½
+x1 = x0(1); %Í¶Ó°ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
+scale_normal = zeros(scale * width,3);%Í¶Ó°ï¿½æ·¨ï¿½ï¿½ï¿½ï¿½?
+scale_x = zeros(scale * width,1);%4ï¿½ï¿½Æ½ï¿½ï¿½ï¿½Ïµï¿½xï¿½ï¿½ï¿½
 for i = 1 : scale * width
     z1 = [x1^3,x1^2,x1^1,1];
     k = z1*f_derv';
@@ -26,23 +27,23 @@ for i = 1 : scale * width
     nk = atan(k);
     scale_normal(i,:) = [-sin(nk),cos(nk),0];
 end
-%4´ÎÇúÃæÉÏµÈ¾àµã¶ÔÓ¦µÄy×ø±ê
+%4ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÈ¾ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½yï¿½ï¿½ï¿½
 scale_y = polyval(f, scale_x);
 
 
 center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
 center_points(:,4) = 1 : length(center_points);
-%ÐèÒª¿¼²ìµÄÃæÔª
+%ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôª
 proj_image = center_points(find(center_points(:,3) > level_plane), :);
 
-%¼ÆËãÃ¿¸öÈý½ÇÃæÔªÓ³Éäµ½×îÖÕÍ¼ÏñÖÐµÄ×ø±ê
+%ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÔªÓ³ï¿½äµ½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½
 int_image_range = zeros(width * scale, heighth * scale);
 int_image_range_index = zeros(width * scale, heighth * scale);
 
-%ÓÐÐ§µã×ø±êºÍÐòºÅ?
+%ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
 proj_image_center = center_points(proj_image(:,4),:);
 proj_image_index = proj_image(:,4);
-%Ê¹ÓÃkd treeËÑË÷ÁÙ½üµã
+%Ê¹ï¿½ï¿½kd treeï¿½ï¿½ï¿½ï¿½ï¿½Ù½ï¿½ï¿½
 Mdl = createns(proj_image_center(:,1:1:3),'NSMethod','kdtree','Distance','euclidean');
 
 
@@ -60,14 +61,14 @@ for i = 1 : heighth * scale - floor(1.5*scale)
 
             idx = cell2mat(rangesearch(Mdl,[x, y, z], 5 + step * 20));
             idx_ori = idx;
-            idx = setdiff(idx, idx_pre);%È¥µôÉÏÒ»ÂÖÑéÖ¤¹ýµÄµã
+            idx = setdiff(idx, idx_pre);%È¥ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½Äµï¿½
  
             if isempty(idx)
                 step = step + 1;
                 continue
             end
             
-            %¼ÆËãknnËÑË÷µ½µÄµãºÍÆ½Ãæ·¨ÏßµÄ¼Ð½Ç
+            %ï¿½ï¿½ï¿½ï¿½knnï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½Æ½ï¿½æ·¨ï¿½ßµÄ¼Ð½ï¿½
             center_x = [x y z] - center_points(proj_image_index(idx),1:3);
             arc = acos(center_x * normal' ./ sum(abs(center_x).^2,2).^(1/2));
             arc_index = [arc, (1:length(arc))'];
@@ -88,16 +89,16 @@ for i = 1 : heighth * scale - floor(1.5*scale)
             for face_index = idx
                 linepoint1 = [x,y,z]; %ï¿½ï¿½Ê¼ï¿½ï¿½
                 linepoint2 = [x,y,z] + 5 .* normal; %Ö±ï¿½ï¿½ï¿½Ø·ï¿½ï¿½ß·ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
-                vertexpoint = vertexs(faces(proj_image_index(face_index),1:3), :); %ï¿½ï¿½ï¿½ï¿½ï¿½Ôªï¿½ï¿?
+                vertexpoint = vertexs(faces(proj_image_index(face_index),1:3), :); %ï¿½ï¿½ï¿½ï¿½ï¿½Ôªï¿½ï¿½?
                 [cross_point, have_cross] = validPoint(linepoint1,linepoint2,... %ï¿½ï¿½ï¿½ã½»ï¿½ï¿½
                     vertexpoint(1,:),vertexpoint(2,:),vertexpoint(3,:));
-                if have_cross == 1  %ï¿½ï¿½ï¿½ï¿½Ð½ï¿½ï¿½ã£¬ï¿½ï¿½Ã´ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½Êµï¿½Êµï¿½ï¿?
+                if have_cross == 1  %ï¿½ï¿½ï¿½ï¿½Ð½ï¿½ï¿½ã£¬ï¿½ï¿½Ã´ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½Êµï¿½Êµï¿½ï¿½?
                     if int_image_range(j, i) == 0
                         int_image_range(j, i) = distance([x,y,z], cross_point)^1.5;
                     else
                         int_image_range(j, i) = min(int_image_range(j, i), distance([x,y,z], cross_point)^1.5);
                     end
-                    %%%%%%%%%%%%%%%%%%%%%%%%%%%ÐÞ¸ÄÓ³ÉäµãµÄ×ø±ê£¬Î´Íê³É%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%ï¿½Þ¸ï¿½Ó³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê£¬Î´ï¿½ï¿½ï¿½%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                     int_image_range_index(j, i) = proj_image_index(face_index);
                 end
             end

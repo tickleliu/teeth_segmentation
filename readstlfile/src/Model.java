@@ -123,11 +123,14 @@ public class Model {
 		printWriter.flush();
 		printWriter.close();
 	}
+
 	public void saveModel2(String path) throws IOException {
 		File file = new File(path);
 		FileOutputStream fileOutputStream = new FileOutputStream(file);
-		BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-		DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
+		BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+				fileOutputStream);
+		DataOutputStream dataOutputStream = new DataOutputStream(
+				bufferedOutputStream);
 		dataOutputStream.writeInt(this.vertexs.size());
 		for (int i = 0; i < this.vertexs.size(); i++) {
 			dataOutputStream.writeFloat(vertexs.get(i).x);
@@ -158,7 +161,8 @@ public class Model {
 		return result;
 	}
 
-	static public void convertFromFolder(String path) throws FileNotFoundException, IOException {
+	static public void convertFromFolder(String path)
+			throws FileNotFoundException, IOException {
 		File file = new File(path);
 		File[] files = file.listFiles();
 		if (files == null) {
@@ -173,16 +177,18 @@ public class Model {
 				model.loadModel(file2.getAbsolutePath());
 				System.out.println(model.faces.size());
 				System.out.println(model.vertexIndexMap.size());
-				model.saveModel(file2.getAbsolutePath().replaceAll(".stl", ".dat"));
+				model.saveModel2(file2.getAbsolutePath().replaceAll(".stl",
+						".dat"));
 			}
 		}
 	}
 
 	public static void main(String[] args) throws IOException {
-		Model model = new Model();
-		model.loadModel("F:\\Dent2-.stl");
-		System.out.println(model.faces.size());
-		System.out.println(model.vertexIndexMap.size());
-		model.saveModel2("F:\\Dent2.dat");
+		convertFromFolder("/home/wangheda/Desktop/Chenhu-ModelScan");
+		// Model model = new Model();
+		// model.loadModel("F:\\Dent2-.stl");
+		// System.out.println(model.faces.size());
+		// System.out.println(model.vertexIndexMap.size());
+		// model.saveModel2("F:\\Dent2.dat");
 	}
 }
