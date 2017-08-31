@@ -29,4 +29,3 @@ for i = scale + 1 : width - scale
         end
     end
 end
-image(rot90(int_image_range));
