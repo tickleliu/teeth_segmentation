@@ -1,4 +1,4 @@
-function [up_image, x0, f_r] = calc_up_range(vertexs, faces, level_plane)
+function [up_image, x0, f] = calc_up_range3(vertexs, faces, level_plane)
 % 
 
 minX = min(vertexs(:,1));
@@ -57,51 +57,29 @@ end
 points = sortrows(points);
 points(:,1) = (points(:,1) - 1) / scale + minX;
 points(:,2) = (points(:,2) - 1) / scale + minY;
+h  = convhull(points(:,1), points(:,2));
+points_result = points;
+points = points(h,:);
 
-f = polyfit(points(:,1),points(:,2),3);
+f = polyfit(points(:,1),points(:,2),4);
 points_f = polyval(f, points(:,1));
 while length(find(points(:,2) > points_f)) > 3
-    f(4) = f(4) + 1;
+    f(5) = f(5) + 1;
     points_f = polyval(f, points(:,1));
+    hold on;
+scatter(points_result(:,1), points_result(:,2), 'g');
+scatter(points_result(:,1), polyval(f, points_result(:,1)), 'r*');
+scatter(points(:,1), points(:,2), 'b');
+hold off;
 end
 
-%f(x)f'(x)-y0f'(x)+x-x0=0;
-x = [length(f)-1:-1:1];
-f_derv = f(1:end-1).*x;%f'(x)
-f_f_derv = conv(f,f_derv);%f(x)f'(x)
-depth = zeros(1,2);
-for i = 1:length(points)
-    xy = points(i,:);
-    depth(i,1) = 1000;
-    f_tangent=f_f_derv+[0 0 0 -1*xy(1)*f_derv] +[0 0 0 0 1 -1*xy(1)];
-    res = roots(f_tangent);
-    for j = 1:length(res)
-        if isreal(res(j))
-            depth_cur = norm([(res(j)-xy(1)), (xy(2) - polyval(f, res(j)))]);
-            if depth_cur < depth(i,1) 
-                depth(i,1) = depth_cur;
-            end
-        end
-    end
-end
-depth(:,2) = [1 : length(depth)];
-depth = sortrows(depth,1);
-points_result = points(depth(1:20,2),:);
-
-f_r = polyfit(points_result(:,1),points_result(:,2),4);
-
-points_f = polyval(f_r, points_result(:,1));
-while length(find(points_result(:,2) > points_f)) > 3
-    f_r(5) = f_r(5) + 1;
-    points_f = polyval(f_r, points_result(:,1));
-end
-% figure(1)
-% clf;
-% hold on;
-% scatter(points(:,1), points(:,2), 'g.');
-% scatter(points_result(:,1), points_result(:,2), 'bo');
-% scatter(points_result(:,1), polyval(f_r, points_result(:,1)), 'r*');
-% hold off;
+figure(1)
+clf;
+hold on;
+scatter(points_result(:,1), points_result(:,2), 'g');
+scatter(points_result(:,1), polyval(f, points_result(:,1)), 'r*');
+scatter(points(:,1), points(:,2), 'b');
+hold off;
 
 % image(image_deco);
 

@@ -1,24 +1,28 @@
-function [int_image_range, int_image_range_index] = calc_image_intercept(faces, vertexs, f, x0)
-%��������ģ�������ȫ��ͶӰ
+function [int_image_range, int_image_range_index] = calc_image_intercept(faces, vertexs, f, level_plane, scale)
+%��������ģ�������ȫ��Ͷ�?
 %f����ҪͶӰ���Ĵ�����
 %������4�����߷���ͶӰ�泤��
+
+minX = min(vertexs(:,1));
+maxX = max(vertexs(:,1));
+midX = (minX + maxX) / 2;
+minX = midX - 75;
+maxX = midX + 75;
+x0 = [minX:1/scale:maxX - 1];
+
 y0 = polyval(f,x0);
 width = floor(sum(sqrt(diff(x0).^2 + diff(y0).^2)));
 heighth = 15;
-scale = 5;%ͶӰ���ų߶�
-minZ = min(vertexs(:,3));
-maxZ = max(vertexs(:,3));
-level_plane = (minZ + maxZ) / 3 * 2; %��ʼ�и�ˮƽ��λ��
 
-%�����Ĵ������ϵȾ�����x��y���
+%�����Ĵ������ϵȾ�����x��y���?
 %�е㷽�� f(x)f'(x)-y0f'(x)+x-x0=0;
 x = [length(f)-1:-1:1];
 f_derv = f(1:end-1).*x;%f'(x)
 f_f_derv = conv(f,f_derv);%f(x)f'(x)
 delta_f_length = 1 / scale; %���ų߶�
-x1 = x0(1); %ͶӰ���һ����
+x1 = x0(1); %ͶӰ���һ����?
 scale_normal = zeros(scale * width,3);%ͶӰ�淨����?
-scale_x = zeros(scale * width,1);%4��ƽ���ϵ�x���
+scale_x = zeros(scale * width,1);%4��ƽ���ϵ�x���?
 for i = 1 : scale * width
     z1 = [x1^3,x1^2,x1^1,1];
     k = z1*f_derv';
@@ -27,23 +31,23 @@ for i = 1 : scale * width
     nk = atan(k);
     scale_normal(i,:) = [-sin(nk),cos(nk),0];
 end
-%4�������ϵȾ���Ӧ��y���
+%4�������ϵȾ���Ӧ��y���?
 scale_y = polyval(f, scale_x);
 
 
 center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
 center_points(:,4) = 1 : length(center_points);
-%��Ҫ�������Ԫ
+%��Ҫ��������?
 proj_image = center_points(find(center_points(:,3) > level_plane), :);
 
 %����ÿ�������Ԫӳ�䵽����ͼ���е����
 int_image_range = zeros(width * scale, heighth * scale);
 int_image_range_index = zeros(width * scale, heighth * scale);
 
-%��Ч���������?
+%��Ч���������?
 proj_image_center = center_points(proj_image(:,4),:);
 proj_image_index = proj_image(:,4);
-%ʹ��kd tree�����ٽ��
+%ʹ��kd tree�����ٽ��?
 Mdl = createns(proj_image_center(:,1:1:3),'NSMethod','kdtree','Distance','euclidean');
 
 
@@ -61,19 +65,19 @@ for i = 1 : heighth * scale - floor(1.5*scale)
 
             idx = cell2mat(rangesearch(Mdl,[x, y, z], 5 + step * 20));
             idx_ori = idx;
-            idx = setdiff(idx, idx_pre);%ȥ����һ����֤��ĵ�
+            idx = setdiff(idx, idx_pre);%ȥ����һ����֤��ĵ�?
  
             if isempty(idx)
                 step = step + 1;
                 continue
             end
             
-            %����knn�������ĵ��ƽ�淨�ߵļн�
+            %����knn�������ĵ��ƽ�淨�ߵļн�?
             center_x = [x y z] - center_points(proj_image_index(idx),1:3);
             arc = acos(center_x * normal' ./ sum(abs(center_x).^2,2).^(1/2));
             arc_index = [arc, (1:length(arc))'];
             arc_index = sortrows(arc_index);
-            arc = find(arc_index(:,1) < 0.1);
+            arc = find(arc_index(:,1) < 0.05);
             if length(arc) == 0
                 step = step + 1;
                 continue
@@ -89,10 +93,10 @@ for i = 1 : heighth * scale - floor(1.5*scale)
             for face_index = idx
                 linepoint1 = [x,y,z]; %��ʼ��
                 linepoint2 = [x,y,z] + 5 .* normal; %ֱ���ط��߷�����һ��
-                vertexpoint = vertexs(faces(proj_image_index(face_index),1:3), :); %�����Ԫ��?
+                vertexpoint = vertexs(faces(proj_image_index(face_index),1:3), :); %�����Ԫ��?
                 [cross_point, have_cross] = validPoint(linepoint1,linepoint2,... %���㽻��
                     vertexpoint(1,:),vertexpoint(2,:),vertexpoint(3,:));
-                if have_cross == 1  %����н��㣬��ô��ݸ���Ԫ��������Ȩ����ʵ�ʵ��?
+                if have_cross == 1  %����н��㣬��ô��ݸ���Ԫ��������Ȩ����ʵ�ʵ��?
                     if int_image_range(j, i) == 0
                         int_image_range(j, i) = distance([x,y,z], cross_point)^1.5;
                     else

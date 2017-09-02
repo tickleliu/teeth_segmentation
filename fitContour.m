@@ -1,5 +1,5 @@
 function [f, x0, y0] = fitContour(vertexs, faces)
-% �������ģ����������
+% �������ģ����������?
 % vertexs, faces���㣬��Ԫ�б�
 vertexs_count = length(vertexs);
 arc_sample_point = zeros(1,2);
@@ -70,13 +70,13 @@ for i = max_index + 1 : arc_sample_count
 %         arc_sample_point1(left_count,:) = arc_sample_point(i,:);
 %     end
 end
-plot(arc_sample_point(:,1),arc_sample_point(:,2),'g*',arc_sample_point1(:,1),arc_sample_point1(:,2),'b', mean_x, mean_y, 'ro');
+% plot(arc_sample_point(:,1),arc_sample_point(:,2),'g*',arc_sample_point1(:,1),arc_sample_point1(:,2),'b', mean_x, mean_y, 'ro');
 
 arc_sample_point1 = sortrows(arc_sample_point1,1);
 arc_sample_point = arc_sample_point1;
 f = polyfit(arc_sample_point(3:end -3,1),arc_sample_point(3:end -3,2),4);
 
-f(5) = f(5) + 4;%����������������룬��������������άģ����һ������,���޸ĵĿռ䣬��������ʹ��ȫ����ֵ�������ֵС
+f(5) = f(5) + 4;%����������������룬��������������άģ����һ������?���޸ĵĿռ䣬��������ʹ��ȫ����ֵ�������ֵ�?
 is_include_all = length(find((polyval(f, vertexs_left(:,1)) - vertexs_left(:,2)) < 0));
 while is_include_all > 200
     f(5) = f(5) + 0.1;
