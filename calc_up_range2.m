@@ -28,7 +28,7 @@ points_sample = zeros(1,2);
 points_sample_count = 1;
 for i = 1 : length(points_r)
     if points_r(i,2) > midY
-        points_sample(points_sample_count,:) = points_r(i,:)
+        points_sample(points_sample_count,:) = points_r(i,:);
         points_sample_count = points_sample_count + 1;
     end
 end
@@ -73,11 +73,11 @@ while length(find(points_result(:,2) > points_f)) > 3
     f_r(5) = f_r(5) + 1;
     points_f = polyval(f_r, points_result(:,1));
 end
-% figure(1)
-% clf;
-% hold on;
-% scatter(points(:,1), points(:,2), 'g.');
-% scatter(points(:,1), polyval(f, points(:,1)), 'y.');
+figure(1)
+clf;
+hold on;
+scatter(points(:,1), points(:,2), 'g.');
+scatter(points(:,1), polyval(f, points(:,1)), 'r*');
 % scatter(points_result(:,1), points_result(:,2), 'bo');
 % scatter(points_result(:,1), polyval(f_r, points_result(:,1)), 'r*');
-% hold off;
+hold off;

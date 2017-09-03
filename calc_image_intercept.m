@@ -1,28 +1,51 @@
 function [int_image_range, int_image_range_index] = calc_image_intercept(faces, vertexs, f, level_plane, scale)
-%��������ģ�������ȫ��Ͷ�?
-%f����ҪͶӰ���Ĵ�����
-%������4�����߷���ͶӰ�泤��
+%calculate the teeth panoramic projection image
+%f: the 4 degree polynomial coefficient
 
-minX = min(vertexs(:,1));
-maxX = max(vertexs(:,1));
+center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
+center_points(:,4) = 1 : length(center_points);
+%��Ҫ��������?
+proj_image = center_points(find(center_points(:,3) > level_plane), :);
+
+minX = min(center_points(:,1));
+maxX = max(center_points(:,1));
 midX = (minX + maxX) / 2;
-minX = midX - 75;
-maxX = midX + 75;
-x0 = [minX:1/scale:maxX - 1];
 
+minY = min(center_points(:,2));
+minY_X = -10000;
+maxY_X = 10000;
+f_y = f;
+f_y(5) = f(5) - minY;
+res = roots(f_y);
+for j = 1:length(res)
+    if isreal(res(j))
+       if res(j) < midX && ((midX - res(j)) < (midX - minY_X))
+           minY_X = res(j);
+       end
+       if res(j) > midX && ((res(j) - midX) < (maxY_X - midX))
+           maxY_X = res(j);
+       end
+    end
+end
+minX = min(minX, minY_X) - 5;
+maxX = max(maxX, maxY_X) + 5;
+
+x0 = [minX:1/scale:maxX - 1];
 y0 = polyval(f,x0);
 width = floor(sum(sqrt(diff(x0).^2 + diff(y0).^2)));
-heighth = 15;
 
-%�����Ĵ������ϵȾ�����x��y���?
-%�е㷽�� f(x)f'(x)-y0f'(x)+x-x0=0;
+maxZ = max(vertexs(:,3));
+heighth = floor(maxZ - level_plane) + 2;
+
+%calc projection plane coordinate dx = ||dx,f'(x)||
+%f(x)f'(x)-y0f'(x)+x-x0=0;
 x = [length(f)-1:-1:1];
 f_derv = f(1:end-1).*x;%f'(x)
 f_f_derv = conv(f,f_derv);%f(x)f'(x)
-delta_f_length = 1 / scale; %���ų߶�
-x1 = x0(1); %ͶӰ���һ����?
-scale_normal = zeros(scale * width,3);%ͶӰ�淨����?
-scale_x = zeros(scale * width,1);%4��ƽ���ϵ�x���?
+delta_f_length = 1 / scale; %step
+x1 = x0(1); %start from x0(1)
+scale_normal = zeros(scale * width,3);%projection plane normal
+scale_x = zeros(scale * width,1);%x coordinate in projection plane
 for i = 1 : scale * width
     z1 = [x1^3,x1^2,x1^1,1];
     k = z1*f_derv';
@@ -31,14 +54,8 @@ for i = 1 : scale * width
     nk = atan(k);
     scale_normal(i,:) = [-sin(nk),cos(nk),0];
 end
-%4�������ϵȾ���Ӧ��y���?
 scale_y = polyval(f, scale_x);
 
-
-center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
-center_points(:,4) = 1 : length(center_points);
-%��Ҫ��������?
-proj_image = center_points(find(center_points(:,3) > level_plane), :);
 
 %����ÿ�������Ԫӳ�䵽����ͼ���е����
 int_image_range = zeros(width * scale, heighth * scale);
@@ -52,9 +69,9 @@ Mdl = createns(proj_image_center(:,1:1:3),'NSMethod','kdtree','Distance','euclid
 
 
 % g = f - [0 0 0 0 5];
-for i = 1 : heighth * scale - floor(1.5*scale)
+for i = 1 : heighth * scale
     i
-    for j = 1 + 30 * scale : width * scale - 30 * scale
+    for j = 1 : width * scale
         %���ص���ͶӰ������ά�ռ����ʵ���
         x = scale_x(j);y = scale_y(j);z =  i / scale + level_plane;
         normal = scale_normal(j,:);
@@ -99,11 +116,13 @@ for i = 1 : heighth * scale - floor(1.5*scale)
                 if have_cross == 1  %����н��㣬��ô��ݸ���Ԫ��������Ȩ����ʵ�ʵ��?
                     if int_image_range(j, i) == 0
                         int_image_range(j, i) = distance([x,y,z], cross_point)^1.5;
+                        int_image_range_index(j, i) = proj_image_index(face_index);
                     else
-                        int_image_range(j, i) = min(int_image_range(j, i), distance([x,y,z], cross_point)^1.5);
+                        if int_image_range(j, i) > distance([x,y,z], cross_point)^1.5
+                            int_image_range(j, i) = distance([x,y,z], cross_point)^1.5;
+                            int_image_range_index(j, i) = proj_image_index(face_index);
+                        end
                     end
-                    %%%%%%%%%%%%%%%%%%%%%%%%%%%�޸�ӳ������꣬δ���%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                    int_image_range_index(j, i) = proj_image_index(face_index);
                 end
             end
             if have_cross == 1               
@@ -115,8 +134,8 @@ for i = 1 : heighth * scale - floor(1.5*scale)
         end
     end
 end
-figure(3);
-image(rot90(int_image_range));
+% figure(3);
+% image(rot90(int_image_range));
 %save image_range10.mat int_image_range;
 
 
