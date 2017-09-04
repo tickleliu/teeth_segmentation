@@ -187,4 +187,4 @@ faces_left(:,2:3) = faces_left(:,2:3) * rotmat;
 % image(rot90(rot90(n_yz_image)));
 % subplot(4,1,4)
 % scatter3(faces_left(:,1),faces_left(:,2),faces_left(:,3));
-% 
+

@@ -11,18 +11,18 @@ model = {};
 d = zeros(1,2);
 height = [];
 width = [];
-scale = 1;
-for i = 1 : modelCount
-    %     for i = 6
+scale = 5;
+% for i = 1 : modelCount
+        for i = 1
     i
     [vertexs, faces] = readmodel(cell2mat(mFiles(i)));
     fprintf('calc the range image for %s\n', cell2mat(mFiles(i)));
     temp = vertexs(:,1);
     vertexs(:,1) = vertexs(:,2);
     vertexs(:,2) = -1 * temp;
-    model(i).vertexs = vertexs;
+%     model(i).vertexs = vertexs;
     [faces_left] = pre3Dmodel(vertexs, faces);
-    model(i).faces = faces_left;
+%     model(i).faces = faces_left;
     minZ = min(faces_left(:,3));
     maxZ = max(faces_left(:,3));
     meanZ = mean(faces_left(:, 3))
@@ -34,7 +34,10 @@ for i = 1 : modelCount
     [int_image_range, int_image_range_index] = calc_image_intercept(faces_left, vertexs, f2, minZ, scale);
 %     %     model(i).image = int_image_range;
 %     %     model(i).image_index = int_image_range_index;
-    imwrite(int_image_range, [int2str(i), '.bmp'], 'bmp');
+%     imwrite(int_image_range, [int2str(i), '.bmp'], 'bmp');
+    g = figure;
+    image(int_image_range);
+    saveas(g, [int2str(i), '.bmp']);
     fprintf('finished the image for %s\n', cell2mat(mFiles(i))); 
 end
 % save orig_model.mat model;
