@@ -6,5 +6,7 @@ readstlfile/.settings/
 *.jpg
 *.bmp
 *.mat
-
+*.tmp
+*.stl
+*.dat
 

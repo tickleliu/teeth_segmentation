@@ -1,4 +1,4 @@
-function [vertexs, faces] = readmodel(path)
+function [vertexs, faces, normals] = readmodel(path)
 % 读取模型文件
 % path模型文件路径
 fid = fopen(path);
@@ -9,6 +9,9 @@ vertexs = vertexs';
 [face_count, count] = fread(fid, 1, 'int32', 'b');
 [faces, count] = fread(fid, [3,face_count], 'int32','b');
 faces = faces';
+[normals_count, count] = fread(fid, 1, 'int32', 'b');
+[normals, count] = fread(fid, [3, normals_count], 'float', 'b');
+normals = normals';
 fclose(fid);
 
 % for i=1:face_count
