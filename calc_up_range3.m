@@ -50,7 +50,7 @@ while count < 30
     [x y] = find(temp == max(max(temp)));
     temp(x-50:x+50, y-50:y + 50) = 0;
     points(count, :) =[x y];
-    image_deco(x-5:x+5, y-5:y+5) = 1000;
+    image_deco(x-5:x+5, y-5:y+5) = 50;
     count = count + 1;
 end
 
@@ -66,21 +66,17 @@ points_f = polyval(f, points(:,1));
 while length(find(points(:,2) > points_f)) > 3
     f(5) = f(5) + 1;
     points_f = polyval(f, points(:,1));
-    hold on;
-scatter(points_result(:,1), points_result(:,2), 'g');
-scatter(points_result(:,1), polyval(f, points_result(:,1)), 'r*');
-scatter(points(:,1), points(:,2), 'b');
-hold off;
 end
 
-figure(1)
-clf;
-hold on;
-scatter(points_result(:,1), points_result(:,2), 'g');
-scatter(points_result(:,1), polyval(f, points_result(:,1)), 'r*');
-scatter(points(:,1), points(:,2), 'b');
-hold off;
-
-% image(image_deco);
+% figure(1)
+% clf;
+% subplot(2,1,1)
+% hold on;
+% scatter(points_result(:,1), points_result(:,2), 'g');
+% scatter(points_result(:,1), polyval(f, points_result(:,1)), 'r*');
+% scatter(points(:,1), points(:,2), 'b');
+% subplot(2,1,2)
+% image(rot90(image_deco));
+% hold off;
 
 

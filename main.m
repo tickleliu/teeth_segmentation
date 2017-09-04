@@ -1,7 +1,7 @@
 clc;close all;clear all;
 
 %% The directory of your files
-str = 'J:\Chenhu-ModelScan\';
+str = '/home/wangheda/Desktop/Chenhu-ModelScan';
 
 %% The use of breadth first walk
 mFiles = RangTraversal(str, '.dat');
@@ -13,7 +13,7 @@ height = [];
 width = [];
 scale = 1;
 for i = 1 : modelCount
-%     for i = 10
+%     for i = 6
     i
     [vertexs, faces] = readmodel(cell2mat(mFiles(i)));
     fprintf('calc the range image for %s\n', cell2mat(mFiles(i)));
@@ -26,12 +26,12 @@ for i = 1 : modelCount
 %     faces = faces_left;
 %     %     vertexs = model(i).vertexs ;
 % %     faces = model(i).faces;
-    minZ = min(vertexs(:,3));
-    maxZ = max(vertexs(:,3));
-    
-    level_plane = minZ + (maxZ - minZ) / 3;
-    [f2] = calc_up_range2(vertexs, faces, level_plane);
-    model(i).f = f2;
+%     minZ = min(vertexs(:,3));
+%     maxZ = max(vertexs(:,3));
+%     meanZ = mean(vertexs(:, 3))
+%     level_plane = meanZ + (maxZ - meanZ) / 3;
+%     [f2] = fitContourByConvhull(vertexs, faces, level_plane);
+%     model(i).f = f2;
     
     
 %     model(i).scale = scale;
