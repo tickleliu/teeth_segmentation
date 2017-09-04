@@ -12,17 +12,17 @@ d = zeros(1,2);
 height = [];
 width = [];
 scale = 1;
-for i = 1 : modelCount
-    %     for i = 6
+% for i = 1 : modelCount
+        for i = 13
     i
     [vertexs, faces] = readmodel(cell2mat(mFiles(i)));
     fprintf('calc the range image for %s\n', cell2mat(mFiles(i)));
     temp = vertexs(:,1);
     vertexs(:,1) = vertexs(:,2);
     vertexs(:,2) = -1 * temp;
-    model(i).vertexs = vertexs;
+%     model(i).vertexs = vertexs;
     [faces_left] = pre3Dmodel(vertexs, faces);
-    model(i).faces = faces_left;
+%     model(i).faces = faces_left;
     minZ = min(faces_left(:,3));
     maxZ = max(faces_left(:,3));
     meanZ = mean(faces_left(:, 3))
