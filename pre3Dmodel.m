@@ -164,25 +164,27 @@ faces_left = faces_left(1 : faces_left_count - 1, :);
 theta = atan(f(1));
 rotmat = [cos(theta) -sin(theta); sin(theta) cos(theta)];
 faces_left(:,2:3) = faces_left(:,2:3) * rotmat;
-subplot(4,1,1)
-image(rot90(rot90(yz_image2)));
-subplot(4,1,2)
-image(rot90(rot90(yz_image)));
-subplot(4,1,3)
-minY = min(faces_left(:,2));
-maxY = max(faces_left(:,2));
-minZ = min(faces_left(:,3));
-maxZ = max(faces_left(:,3));
-scale = 10;
-y0 = [minY:1/scale:maxY];
-z0 = [minZ:1/scale:maxZ];
-n_yz_image = zeros(length(z0), length(y0));%yz projection image
-for i = 1 : length(faces_left)
-    y = floor((faces_left(i,2) - minY) * scale) + 1;
-    z = floor((faces_left(i,3) - minZ) * scale) + 1;
-    n_yz_image(z, y) = 10;
-end
-image(rot90(rot90(n_yz_image)));
-subplot(4,1,4)
-scatter3(faces_left(:,1),faces_left(:,2),faces_left(:,3));
 
+%display result
+% subplot(4,1,1)
+% image(rot90(rot90(yz_image2)));
+% subplot(4,1,2)
+% image(rot90(rot90(yz_image)));
+% subplot(4,1,3)
+% minY = min(faces_left(:,2));
+% maxY = max(faces_left(:,2));
+% minZ = min(faces_left(:,3));
+% maxZ = max(faces_left(:,3));
+% scale = 10;
+% y0 = [minY:1/scale:maxY];
+% z0 = [minZ:1/scale:maxZ];
+% n_yz_image = zeros(length(z0), length(y0));%yz projection image
+% for i = 1 : length(faces_left)
+%     y = floor((faces_left(i,2) - minY) * scale) + 1;
+%     z = floor((faces_left(i,3) - minZ) * scale) + 1;
+%     n_yz_image(z, y) = 10;
+% end
+% image(rot90(rot90(n_yz_image)));
+% subplot(4,1,4)
+% scatter3(faces_left(:,1),faces_left(:,2),faces_left(:,3));
+% 

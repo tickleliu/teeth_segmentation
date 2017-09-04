@@ -4,6 +4,7 @@ readstlfile/.classpath
 readstlfile/.settings/
 *.asv
 *.jpg
+*.bmp
 *.mat
 
 

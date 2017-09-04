@@ -13,7 +13,7 @@ height = [];
 width = [];
 scale = 1;
 for i = 1 : modelCount
-%     for i = 6
+    %     for i = 6
     i
     [vertexs, faces] = readmodel(cell2mat(mFiles(i)));
     fprintf('calc the range image for %s\n', cell2mat(mFiles(i)));
@@ -22,24 +22,20 @@ for i = 1 : modelCount
     vertexs(:,2) = -1 * temp;
     model(i).vertexs = vertexs;
     [faces_left] = pre3Dmodel(vertexs, faces);
-%     model(i).faces = faces_left;
-%     faces = faces_left;
-%     %     vertexs = model(i).vertexs ;
-% %     faces = model(i).faces;
-%     minZ = min(vertexs(:,3));
-%     maxZ = max(vertexs(:,3));
-%     meanZ = mean(vertexs(:, 3))
-%     level_plane = meanZ + (maxZ - meanZ) / 3;
-%     [f2] = fitContourByConvhull(vertexs, faces, level_plane);
-%     model(i).f = f2;
-    
-    
-%     model(i).scale = scale;
-%     [int_image_range, int_image_range_index] = calc_image_intercept(faces, vertexs, f2, level_plane, scale);
-%     model(i).image = int_image_range;
-%     model(i).image_index = int_image_range_index;
-%     fprintf('finished the image for %s\n', cell2mat(mFiles(i)));
-%     imwrite(int_image_range, [int2str(i), '.jpg']);
+    model(i).faces = faces_left;
+    minZ = min(faces_left(:,3));
+    maxZ = max(faces_left(:,3));
+    meanZ = mean(faces_left(:, 3))
+    level_plane = meanZ + (maxZ - meanZ) / 3;
+    faces_left = faces(faces_left(:,4), :);
+    [f2] = fitContourByConvhull(vertexs, faces_left, level_plane);
+    model(i).f = f2;
+    model(i).scale = scale;
+    [int_image_range, int_image_range_index] = calc_image_intercept(faces_left, vertexs, f2, minZ, scale);
+%     %     model(i).image = int_image_range;
+%     %     model(i).image_index = int_image_range_index;
+    imwrite(int_image_range, [int2str(i), '.bmp'], 'bmp');
+    fprintf('finished the image for %s\n', cell2mat(mFiles(i))); 
 end
 % save orig_model.mat model;
 % load orig_model.mat;
@@ -48,10 +44,10 @@ end
 %     faces = model(i).faces;
 %     minZ = min(vertexs(:,3));
 %     maxZ = max(vertexs(:,3));
-%     
+%
 %     level_plane = minZ + (maxZ - minZ) / 3;
 %     [f2] = calc_up_range2(vertexs, faces, level_plane);
-%     
+%
 %     model(i).f = f2;
 %     model(i).scale = scale;
 %     [int_image_range, int_image_range_index] = calc_image_intercept(faces, vertexs, f2, level_plane, scale);
@@ -60,6 +56,6 @@ end
 %     fprintf('finished the image for %s\n', cell2mat(mFiles(i)));
 %     imwrite(int_image_range, [int2str(i), '.jpg']);
 % end
-% 
+%
 
 
