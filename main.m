@@ -25,15 +25,15 @@ for i = 1 : modelCount
     %     model(i).faces = faces_left;
     minZ = min(faces_left(:,3));
     maxZ = max(faces_left(:,3));
-    meanZ = mean(faces_left(:, 3))
-    level_plane = minZ + 1;
+    meanZ = mean(faces_left(:, 3));
+    level_plane = minZ + (maxZ - minZ) * 0.1;
     normals_left = normals(faces_left(:,4), :);
     faces_left = faces(faces_left(:,4), :);
-%     vertexs(:,2:3) = vertexs(:,2:3) * rotmat;
-%     [f2] = fitContourByConvhull(vertexs, faces_left, level_plane);
+    vertexs(:,2:3) = vertexs(:,2:3) * rotmat;
+    [f2] = fitContourByConvhull2(vertexs, faces_left, level_plane);
 %     model(i).f = f2;
 %     model(i).scale = scale;
-    saveStlFile([int2str(i), '.tmp'], '', faces_left, vertexs, normals_left);
+%     saveStlFile([int2str(i), '.tmp'], '', faces_left, vertexs, normals_left);
     %     [int_image_range, int_image_range_index] = calc_image_intercept(faces_left, vertexs, f2, minZ, scale);
     %     model(i).image = int_image_range;
     %     model(i).image_index = int_image_range_index;
