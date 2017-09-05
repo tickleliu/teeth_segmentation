@@ -171,7 +171,7 @@ public class Model {
 		dataOutputStream.write(big2little(faceCount));
 		for (int i = 0; i < faceCount; i++) {
 			for (int j = 0; j < 12; j++) {
-			dataOutputStream.write(big2little(floats[j][i]));
+				dataOutputStream.write(big2little(floats[j][i]));
 			}
 			dataOutputStream.writeShort(0);
 		}
@@ -246,10 +246,20 @@ public class Model {
 	}
 
 	public static void main(String[] args) throws IOException {
-		// convertFromFolder("J:\\Chenhu-ModelScan");
+		// convertFromFolder("/home/wangheda/Desktop/Chenhu-ModelScan");
+		File file = new File("/home/wangheda/teeth_segmentation/");
+		File[] files = file.listFiles();
+		if (files == null) {
+			return;
+		}
+		for (File file2 : files) {
+			if (file2.getAbsolutePath().endsWith(".tmp")) {
+				System.out.println(file2.getAbsolutePath());
+				saveModel3(file2.getAbsolutePath(), file2.getAbsolutePath()
+						.replaceAll(".tmp", ".stl"));
 
-		saveModel3("I:\\MATLAB\\teeth_segmentation\\test.tmp",
-				"I:\\MATLAB\\teeth_segmentation\\test.stl");
+			}
+		}
 		// Model model = new Model();
 		// model.loadModel("F:\\Dent2-.stl");
 		// System.out.println(model.faces.size());

@@ -9,4 +9,5 @@ readstlfile/.settings/
 *.tmp
 *.stl
 *.dat
+*.fig
 
