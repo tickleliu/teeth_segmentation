@@ -3,9 +3,9 @@ import java.util.List;
 
 public class Face {
 
-	double normalX;
-	double normalY;
-	double normalZ;
+	float normalX;
+	float normalY;
+	float normalZ;
 
 	List<Integer> vertexs;
 

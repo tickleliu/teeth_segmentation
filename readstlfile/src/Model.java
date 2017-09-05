@@ -1,5 +1,7 @@
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,8 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -124,6 +126,59 @@ public class Model {
 		printWriter.close();
 	}
 
+	static public byte[] big2little(float f) {
+		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4);
+		byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		byteBuffer.putFloat(f);
+		byteBuffer.rewind();
+		byte[] arrayx = new byte[4];
+		byteBuffer.get(arrayx);
+		return arrayx;
+	}
+
+	static public byte[] big2little(int f) {
+		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4);
+		byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		byteBuffer.putInt(f);
+		byteBuffer.rewind();
+		byte[] arrayx = new byte[4];
+		byteBuffer.get(arrayx);
+		return arrayx;
+	}
+
+	static public void saveModel3(String from, String des) throws IOException {
+		File file2 = new File(from);
+		FileInputStream fileInputStream = new FileInputStream(file2);
+		BufferedInputStream bufferedInputStream = new BufferedInputStream(
+				fileInputStream);
+		DataInputStream dataInputStream = new DataInputStream(
+				bufferedInputStream);
+		int faceCount = dataInputStream.readInt();
+		float[][] floats = new float[12][faceCount];
+		for (int i = 0; i < floats.length; i++) {
+			for (int j = 0; j < floats[i].length; j++) {
+				floats[i][j] = dataInputStream.readFloat();
+			}
+		}
+
+		File file = new File(des);
+		FileOutputStream fileOutputStream = new FileOutputStream(file);
+		BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+				fileOutputStream);
+		DataOutputStream dataOutputStream = new DataOutputStream(
+				bufferedOutputStream);
+		dataOutputStream.write(new byte[80]);
+		dataOutputStream.write(big2little(faceCount));
+		for (int i = 0; i < faceCount; i++) {
+			for (int j = 0; j < 12; j++) {
+			dataOutputStream.write(big2little(floats[j][i]));
+			}
+			dataOutputStream.writeShort(0);
+		}
+		dataOutputStream.flush();
+		dataOutputStream.close();
+	}
+
 	public void saveModel2(String path) throws IOException {
 		File file = new File(path);
 		FileOutputStream fileOutputStream = new FileOutputStream(file);
@@ -143,6 +198,13 @@ public class Model {
 			dataOutputStream.writeInt(faces.get(i).vertexs.get(0));
 			dataOutputStream.writeInt(faces.get(i).vertexs.get(1));
 			dataOutputStream.writeInt(faces.get(i).vertexs.get(2));
+		}
+
+		dataOutputStream.writeInt(this.faces.size());
+		for (int i = 0; i < this.faces.size(); i++) {
+			dataOutputStream.writeFloat(faces.get(i).normalX);
+			dataOutputStream.writeFloat(faces.get(i).normalY);
+			dataOutputStream.writeFloat(faces.get(i).normalZ);
 		}
 		dataOutputStream.flush();
 		dataOutputStream.close();
@@ -184,7 +246,10 @@ public class Model {
 	}
 
 	public static void main(String[] args) throws IOException {
-		convertFromFolder("/home/wangheda/Desktop/Chenhu-ModelScan");
+		// convertFromFolder("J:\\Chenhu-ModelScan");
+
+		saveModel3("I:\\MATLAB\\teeth_segmentation\\test.tmp",
+				"I:\\MATLAB\\teeth_segmentation\\test.stl");
 		// Model model = new Model();
 		// model.loadModel("F:\\Dent2-.stl");
 		// System.out.println(model.faces.size());
