@@ -46,12 +46,12 @@ function [p] = polyfit_coff(x,y,n)
 if ~isequal(size(x),size(y))
     error(message('MATLAB:polyfit:XYSizeMismatch'))
 end
-eps = 0.0001
+eps = 0.0001;
 x = x(:);
 y = y(:);
 mean_x = mean(x);
 c = zeros(length(x), 1);
-c = 1 ./ (abs(x - mean_x) + eps)
+c = 1 ./ (abs(x - mean_x) + eps);
 
 % Construct Vandermonde matrix.
 V(:,n+1) = ones(length(x),1,class(x));
