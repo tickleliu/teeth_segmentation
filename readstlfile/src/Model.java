@@ -252,11 +252,13 @@ public class Model {
 		if (files == null) {
 			return;
 		}
+		int count = 1;
 		for (File file2 : files) {
 			if (file2.getAbsolutePath().endsWith(".tmp")) {
-				System.out.println(file2.getAbsolutePath());
+				System.out.println(count + ": " +file2.getAbsolutePath());
 				saveModel3(file2.getAbsolutePath(), file2.getAbsolutePath()
 						.replaceAll(".tmp", ".stl"));
+				count ++;
 
 			}
 		}
