@@ -11,7 +11,7 @@ model = {};
 d = zeros(1,2);
 height = [];
 width = [];
-scale = 1;
+scale = 5;
 for i = 1 : modelCount
 % for i = 103
     i
