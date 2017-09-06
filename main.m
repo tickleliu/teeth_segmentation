@@ -8,7 +8,7 @@ fid = fopen('config.dat');
 while 1
     tline = fgetl(fid);
     if ~ischar(tline), break, end
-    [name, value] = strtok(tline, '=')
+    [name, value] = strtok(tline, '=');
     if strcmp(name, 'scale')
         scale = str2num(value(2:end))
     end
@@ -20,7 +20,7 @@ end
 fclose(fid);
 
 %% 
-mFiles = RangTraversal(str, '.dat');
+mFiles = RangTraversal(path, '.dat');
 mFiles = mFiles';
 modelCount = length(mFiles);
 model = {};
@@ -59,5 +59,5 @@ for i = 1 : modelCount
     saveas(g, [int2str(i), '.fig']);
     fprintf('finished the image for %s\n', cell2mat(mFiles(i)));
 end
-save model as all_model.mat;
+% save model all_model.mat;
 
