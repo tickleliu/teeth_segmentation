@@ -4,7 +4,7 @@ function [int_image_range, int_image_range_index] = calc_image_intercept2(faces,
 
 center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
 center_points(:,4) = 1 : length(center_points);
-%��Ҫ��������?
+%��Ҫ��������?
 proj_image = center_points(center_points(:,3) > level_plane, :);
 
 minX = min(center_points(:,1));
@@ -82,16 +82,16 @@ for i = 1 : scale * width
     end
 end
 empty_pixels = empty_pixels(1:empty_pixels_count,:);
-%��Ч���������?
+%��Ч���������?
 proj_image_center = center_points(proj_image(:,4),:);
 proj_image_index = proj_image(:,4);
-%ʹ��kd tree�����ٽ��?
+%ʹ��kd tree�����ٽ��?
 Mdl = createns(proj_image_center(:,1:1:3),'NSMethod','kdtree','Distance','euclidean');
 % g = f - [0 0 0 0 5];
 disp(empty_pixels_count);
 radius = max(max(int_image_range));
 for ii = 1 : empty_pixels_count
-    if mod(ii ,floor(empty_pixels_count / 100)) == 0
+    if mod(ii ,floor(empty_pixels_count / 10)) == 0
         percent = ii / empty_pixels_count
     end
     j = empty_pixels(ii,1);
@@ -104,9 +104,9 @@ for ii = 1 : empty_pixels_count
     idx_pre = [];
     
     idx = cell2mat(rangesearch(Mdl,[x, y, z], radius));
-    idx = setdiff(idx, idx_pre);%ȥ����һ����֤��ĵ�?
+    idx = setdiff(idx, idx_pre);%ȥ����һ����֤��ĵ�?
     
-    %����knn�������ĵ��ƽ�淨�ߵļн�?
+    %����knn�������ĵ��ƽ�淨�ߵļн�?
     center_x = [x y z] - center_points(proj_image_index(idx),1:3);
     arc = acos(center_x * normal' ./ sum(abs(center_x).^2,2).^(1/2));
     arc_index = [arc, (1:length(arc))'];
@@ -119,10 +119,10 @@ for ii = 1 : empty_pixels_count
     for face_index = idx
         linepoint1 = [x,y,z]; %��ʼ��
         linepoint2 = [x,y,z] + 5 .* normal; %ֱ���ط��߷�����һ��
-        vertexpoint = vertexs(faces(proj_image_index(face_index),1:3), :); %�����Ԫ��?
+        vertexpoint = vertexs(faces(proj_image_index(face_index),1:3), :); %�����Ԫ��?
         [cross_point, have_cross] = validPoint(linepoint1,linepoint2,... %���㽻��
             vertexpoint(1,:),vertexpoint(2,:),vertexpoint(3,:));
-        if have_cross == 1  %����н��㣬��ô��ݸ���Ԫ��������Ȩ����ʵ�ʵ��?
+        if have_cross == 1  %����н��㣬��ô��ݸ���Ԫ��������Ȩ����ʵ�ʵ��?
             if int_image_range(j, i) == 0
                 int_image_range(j, i) = distance([x,y,z], cross_point);
                 int_image_range_index(j, i) = proj_image_index(face_index);
@@ -134,12 +134,12 @@ for ii = 1 : empty_pixels_count
             end
         end
     end
-    if have_cross == 1
-        break
-    end
 end
-figure(3);
-image(rot90(int_image_range));
+int_image_range = int_image_range.^1.5;
+int_image_range = fillhole(int_image_range, scale);
+int_image_range = medfilt2(int_image_range);
+% figure(3);
+% image(rot90(int_image_range));
 %save image_range10.mat int_image_range;
 
 

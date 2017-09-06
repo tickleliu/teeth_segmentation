@@ -69,5 +69,5 @@ p = R\(Q'*y1);    % Same as p = V\y;
 
 p = p.';          % Polynomial coefficients are row vectors by convention.
 
-plot(x, y, '*r', x, polyval(p, x),  'ob');
+% plot(x, y, '*r', x, polyval(p, x),  'ob');
 
