@@ -1,4 +1,4 @@
-function [proj_image] = calcDepth(faces, vertexs, f)
+function [proj_image, vertexs_map_image] = calcDepth(faces, vertexs, f, level_plane)
 %计算mesh中点到投影面距离
 % calc the vertex deepth
 % calc the tangent point
@@ -6,35 +6,15 @@ function [proj_image] = calcDepth(faces, vertexs, f)
 x = [length(f)-1:-1:1];
 f_derv = f(1:end-1).*x;%f'(x)
 f_f_derv = conv(f,f_derv);%f(x)f'(x)
-for i = 1:length(arc_sample_point)
-    xy = arc_sample_point(i,:);
-    f_tangent=f_f_derv+[0 0 0 0 -1*xy(2)*f_derv] +[0 0 0 0 0 0 1 -1*xy(1)];
-    res = roots(f_tangent);
-    for j = 1:length(res)
-        if abs(res(j)-xy(1)) < 5 && isreal(res(j))
-            line([xy(1), res(j)],[xy(2), polyval(f, res(j))]);
-            x1 = res(j);
-            z1 = [x1^3,x1^2,x1^1,1];
-            k = z1*f_derv';
-            t = 10;
-            nk = atan(k);
-            ex_normal = [-sin(nk),cos(nk)];
-            t = 5;
-            line([res(j) + t * ex_normal(1), res(j)],[polyval(f, res(j)) + t * ex_normal(2), polyval(f, res(j))]);
-        end
-    end
-end
-
 %genelize the range map
 %计算每个顶点（vertex）映射到最终图中的坐标
 disp 'calculate the vertexs projection'
-proj_image = zeros(1,4);%1 映射到曲线的x坐标，2z坐标，3到拟合曲线距离，4面元index
-proj_image_length = 1;
+
 vertexs_map_image = zeros(length(vertexs),4);
 res_threshold = 10;
 for i = 1 : length(vertexs)
     vertexs_map_image(i, 4) = i;
-    if vertexs(i, 3) < 4
+    if vertexs(i, 3) < level_plane
         continue;
     end
     xy = vertexs(i,1:2);
@@ -60,9 +40,10 @@ center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces
 %         i
 %     end
 % end
-
+proj_image = zeros(length(faces),4);%1 映射到曲线的x坐标，2z坐标，3到拟合曲线距离，4面元index
+proj_image_length = 1;
 for i = 1 : length(faces)
-    if center_points(i, 3) < 5 %只考虑水平线以上的面元
+    if center_points(i, 3) < level_plane %只考虑水平线以上的面元
         continue;
     end
     xy = center_points(i, 1:2);
@@ -80,4 +61,4 @@ for i = 1 : length(faces)
         i
     end
 end
-
+proj_image = proj_image(1 :proj_image_length - 1, : );

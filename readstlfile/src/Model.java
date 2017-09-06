@@ -247,7 +247,8 @@ public class Model {
 
 	public static void main(String[] args) throws IOException {
 		// convertFromFolder("/home/wangheda/Desktop/Chenhu-ModelScan");
-		File file = new File("/home/wangheda/teeth_segmentation/");
+//		File file = new File("/home/wangheda/teeth_segmentation/");
+		File file = new File("C:\\Users\\think\\Documents\\MATLAB\\teeth_segmentation");
 		File[] files = file.listFiles();
 		if (files == null) {
 			return;

@@ -1,4 +1,4 @@
-function [faces_left, rotmat] = pre3Dmodel(vertexs, faces)
+function [faces_left, f] = pre3Dmodel(vertexs, faces)
 %pre process the teeth model
 %1. delete extra tail struct
 %2. delete the faces under fit plane(tooth-up-plane move down by minZ / 2)
