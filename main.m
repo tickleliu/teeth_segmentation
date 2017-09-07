@@ -49,7 +49,7 @@ for i = 1 : modelCount
     normals = normals(faces_left(:,4), :); %final normals
     faces = faces(faces_left(:,4), :); %final faces
     vertexs(:,2:3) = vertexs(:,2:3) * rotmat; % rot the plane
-    %     vertexs(:,3) = vertexs(:,3) - polyval(f, vertexs(:,2));
+%     vertexs(:,3) = vertexs(:,3) - polyval(f, vertexs(:,2));
     
     %% fit the teeth outer projection plane
     minZ = min(faces_left(:,3));
@@ -64,7 +64,7 @@ for i = 1 : modelCount
     paths = regexp(cell2mat(mFiles(i)), '[\\/]', 'split');
     filename = [cell2mat(paths(end-1)), '-' , cell2mat(paths(end))];
     filename = filename(1:end-3);
-    %     saveStlFile([int2str(i), '-', filename, 'tmp'], '', faces, vertexs, normals);
+    saveStlFile([int2str(i), '-', filename, 'tmp'], '', faces, vertexs, normals);
     %     [int_image_range, int_image_range_index] = calc_image_intercept(faces, vertexs, f2, minZ, scale);
     %         [int_image_range, int_image_range_index] = calc_range_image(faces, vertexs, f2, minZ, scale);
     [int_image_range, int_image_range_index] = calc_image_intercept2(faces, vertexs, f2, minZ, scale);

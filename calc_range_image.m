@@ -28,10 +28,19 @@ for j = 1:length(res)
 end
 minX = min(minX, minY_X) - 5;
 maxX = max(maxX, maxY_X) + 5;
+
+if minX < -100
+    minX = min(center_points(:,1)) - 10;
+end
+
+if maxX > 100
+    maxX = max(center_points(:,1))  + 10;
+end
+
 x0 = [minX:1/scale:maxX - 1];
 y0 = polyval(f,x0);
 width = floor(sum(sqrt(diff(x0).^2 + diff(y0).^2)));
-maxZ = max(vertexs(:,3));
+maxZ = max(center_points(:,3));
 minZ = level_plane;
 heighth = floor(maxZ - level_plane) + 2;
 image_range = zeros(width * scale, heighth * scale);

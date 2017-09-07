@@ -168,7 +168,7 @@ rotmat = [cos(theta) -sin(theta); sin(theta) cos(theta)];
 faces_left(:,2:3) = faces_left(:,2:3) * rotmat;
 minZ = min(faces_left(:,3));
 maxZ = max(faces_left(:,3));
-while maxZ - minZ < 15
+while maxZ - minZ < 20
     f(2) = f(2) - 3;
     faces_left = zeros(length(center_points), 4);
     faces_left_count = 1;

@@ -27,14 +27,23 @@ for j = 1:length(res)
         end
     end
 end
+
 minX = min(minX, minY_X) - 5;
 maxX = max(maxX, maxY_X) + 5;
+
+if minX < -100
+    minX = min(center_points(:,1)) - 10;
+end
+
+if maxX > 100
+    maxX = max(center_points(:,1)) + 10;
+end
 
 x0 = minX:1/scale:maxX - 1;
 y0 = polyval(f,x0);
 width = floor(sum(sqrt(diff(x0).^2 + diff(y0).^2)));
 
-maxZ = max(vertexs(:,3));
+maxZ = max(center_points(:,3));
 heighth = floor(maxZ - level_plane) + 2;
 
 %calc projection plane coordinate dx = ||dx,f'(x)||
@@ -62,19 +71,22 @@ scale_y = polyval(f, scale_x);
 % int_image_range = zeros(width * scale, heighth * scale);
 % int_image_range_index = zeros(width * scale, heighth * scale);
 width_start_index = zeros(scale *width,1);
+width_end_index = zeros(scale *width,1);
 for i = 1 : scale * width
     heighth_start_index = find(int_image_range(i, :) > 0);
-    if isempty(heighth_start_index)
+    if length(heighth_start_index) <= 1
         width_start_index(i) = 0;
+        width_end_index(i) = 1;
     else
         width_start_index(i) = heighth_start_index(end);
+        width_end_index(i) = heighth_start_index(1);
     end
 end
 empty_pixels = zeros(scale * width * heighth * scale,2);
 empty_pixels_count = 0;
 
 for i = 1 : scale * width
-    for j = 1 : width_start_index(i)
+    for j = width_end_index(i) : width_start_index(i)
         if int_image_range(i,j) == 0
             empty_pixels_count = empty_pixels_count + 1;
             empty_pixels(empty_pixels_count, :) = [i, j];
@@ -82,10 +94,10 @@ for i = 1 : scale * width
     end
 end
 empty_pixels = empty_pixels(1:empty_pixels_count,:);
-%��Ч���������?
+%��Ч���������?
 proj_image_center = center_points(proj_image(:,4),:);
 proj_image_index = proj_image(:,4);
-%ʹ��kd tree�����ٽ��?
+%ʹ��kd tree�����ٽ��?
 Mdl = createns(proj_image_center(:,1:1:3),'NSMethod','kdtree','Distance','euclidean');
 % g = f - [0 0 0 0 5];
 disp(empty_pixels_count);
@@ -100,13 +112,8 @@ for ii = 1 : empty_pixels_count
     x = scale_x(j);y = scale_y(j);z =  i / scale + level_plane;
     normal = scale_normal(j,:);
     
-    %���ص���x-z, y-zƽ����radius�����ڵ��ھ���Ԫ
-    idx_pre = [];
-    
-    idx = cell2mat(rangesearch(Mdl,[x, y, z], radius));
-    idx = setdiff(idx, idx_pre);%ȥ����һ����֤��ĵ�?
-    
-    %����knn�������ĵ��ƽ�淨�ߵļн�?
+    idx = cell2mat(rangesearch(Mdl,[x, y, z], radius));    
+    %����knn�������ĵ��ƽ�淨�ߵļн�?
     center_x = [x y z] - center_points(proj_image_index(idx),1:3);
     arc = acos(center_x * normal' ./ sum(abs(center_x).^2,2).^(1/2));
     arc_index = [arc, (1:length(arc))'];
@@ -114,15 +121,24 @@ for ii = 1 : empty_pixels_count
     arc = arc_index(:,1) < 0.05;
     idx = idx(arc_index(arc,2));
     
+    if isempty(idx)
+        continue
+    end
+    
     %�жϸõ��Ƿ���������Ԫ��ĳһ���н���
     have_cross = 0;
     for face_index = idx
         linepoint1 = [x,y,z]; %��ʼ��
         linepoint2 = [x,y,z] + 5 .* normal; %ֱ���ط��߷�����һ��
-        vertexpoint = vertexs(faces(proj_image_index(face_index),1:3), :); %�����Ԫ��?
+        vertexpoint = vertexs(faces(proj_image_index(face_index),1:3), :); %�����Ԫ��?
+        
+%         if length(vertexpoint) ~=3
+%             continue
+%         end
+        
         [cross_point, have_cross] = validPoint(linepoint1,linepoint2,... %���㽻��
             vertexpoint(1,:),vertexpoint(2,:),vertexpoint(3,:));
-        if have_cross == 1  %����н��㣬��ô��ݸ���Ԫ��������Ȩ����ʵ�ʵ��?
+        if have_cross == 1  %����н��㣬��ô��ݸ���Ԫ��������Ȩ����ʵ�ʵ��?
             if int_image_range(j, i) == 0
                 int_image_range(j, i) = distance([x,y,z], cross_point);
                 int_image_range_index(j, i) = proj_image_index(face_index);
