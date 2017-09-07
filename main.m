@@ -62,9 +62,9 @@ for i = 1 : modelCount
     
     %% for display result�� save the left face to a stl file
     paths = regexp(cell2mat(mFiles(i)), '[\\/]', 'split');
-    filename = [cell2mat(paths(end-1)), '-' , cell2mat(paths(end))];
+    filename = [cell2mat(paths(end-1)), '@' , cell2mat(paths(end))];
     filename = filename(1:end-3);
-    saveStlFile([int2str(i), '-', filename, 'tmp'], '', faces, vertexs, normals);
+    saveStlFile([int2str(i), '@', filename, 'tmp'], '', faces, vertexs, normals);
     %     [int_image_range, int_image_range_index] = calc_image_intercept(faces, vertexs, f2, minZ, scale);
     %         [int_image_range, int_image_range_index] = calc_range_image(faces, vertexs, f2, minZ, scale);
     [int_image_range, int_image_range_index] = calc_image_intercept2(faces, vertexs, f2, minZ, scale);
@@ -73,7 +73,7 @@ for i = 1 : modelCount
     %     g = figure('visible', 'off');
     g = figure;
     image(int_image_range);
-    saveas(g, [int2str(i), '-', filename, '.fig']);
+    saveas(g, [int2str(i), '@', filename, '.fig']);
     fprintf('finished the image for %s\n', cell2mat(mFiles(i)));
 end
 % save model all_model.mat;
