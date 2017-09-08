@@ -28,7 +28,7 @@ d = zeros(1,2);
 height = [];
 width = [];
 
-for i = 2 : modelCount
+for i = 109 : modelCount
     % for i = 103
     i
     fprintf('calc the range image for %s\n', cell2mat(mFiles(i)));
@@ -64,10 +64,11 @@ for i = 2 : modelCount
     filename = filename(1:end-3);
     saveStlFile([int2str(i), '@', filename, 'tmp'], '', faces, vertexs, normals);
     [int_image_range, int_image_range_index] = calc_image_intercept2(faces, vertexs, f2, minZ, scale);
-    g = figure;
+    g = figure(1);
     image(int_image_range);
     saveas(g, [int2str(i), '@', filename, '.fig']);
     fprintf('finished the image for %s\n', cell2mat(mFiles(i)));
+    close 1;
 end
 % save model all_model.mat;
 

@@ -1,9 +1,9 @@
 function [image_range, image_range_index] = calc_range_image(faces, vertexs, f, level_plane, scale)
 
-%»ý·Ö¼ÆËãÇúÏß³¤¶È£¬¸ù¾ÝÇúÏß³¤¶È¼ÆËãimage³¤¶È·¶Î§
-% ¿¼ÂÇ¼¸¸öÎÊÌâ1ÊÇx×ªÎªÇúÏßÎ¢Ôª
-% 2ÊÇµ÷Õû»Ò¶È·Ö²¼Í¼£¬
-% 3ÊÇ°ÑÃ»ÓÐÖµµÃ²¿·ÖÌî³äÁË
+%ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½È¼ï¿½ï¿½ï¿½imageï¿½ï¿½ï¿½È·ï¿½Î§
+% ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½x×ªÎªï¿½ï¿½ï¿½ï¿½Î¢Ôª
+% 2ï¿½Çµï¿½ï¿½ï¿½Ò¶È·Ö²ï¿½Í¼ï¿½ï¿½
+% 3ï¿½Ç°ï¿½Ã»ï¿½ï¿½Öµï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
 center_points(:,4) = 1 : length(center_points);
@@ -61,7 +61,7 @@ for i = 2 : scale * width
 end
 
 
-% µ÷Õû¶¥µãµÄÓ³Éä£¬½«x×ø±ê×ª»¯ÎªÇúÏß×ø±ê
+% ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½ä£¬ï¿½ï¿½xï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 scale_x_index = 1;
 vertexs_map_image = sortrows(vertexs_map_image, 1);
 
@@ -111,6 +111,9 @@ for i = 1 : length(proj_image)
             break;
         end
         scale_x_index = scale_x_index + 1;
+    end
+    if scale_x_index > length(scale_x)
+        continue
     end
     if image_range(scale_x_index, y) ==0
         image_range(scale_x_index, y) = proj_image(i,3);

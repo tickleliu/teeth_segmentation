@@ -130,7 +130,7 @@ while sample_point_count < 5
 end
 
 %get sample point from tail
-while sample_point_count < 6
+% while sample_point_count < 6
     for i = length(z0) : -1: 1
         y_sample = find(yz_image_t(i,model_start: model_start + 100) > 0);
         if isempty(y_sample)
@@ -158,7 +158,7 @@ while sample_point_count < 6
             break;
         end
     end
-end
+% end
 
 f = polyfit(y_line(:,1), y_line(:,2), 1);
 if f(1) < 0
