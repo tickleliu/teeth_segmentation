@@ -1,14 +1,8 @@
-fid = fopen('config.dat');
-while 1
-    tline = fgetl(fid);
-    if ~ischar(tline), break, end
-    [name, value] = strtok(tline, '=')
-    if strcmp(name, 'scale')
-        scale = str2num(value(2:end))
-    end
-    
-    if strcmp(name, 'path')
-        path = value(2:end)
-    end
-end
-fclose(fid);
+%load fig file template
+a = open('1@ChenJiaKang_UpperJaw_2016-11-19@UpperJaw..fig');
+a = get(a);
+b = get(a.Chindren);
+b = get(a.Children);
+c = get(b.Children);
+d = c.CData;
+d = rot90(d);
