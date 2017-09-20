@@ -3,6 +3,7 @@ close all; clear all; clc;
 
 sample_count = 6;
 sample_index = randperm(length(mFiles), sample_count);
+% sample_index = 424;
 sample_images = {};
 for i = 1 : sample_count
     sample_images(i).image = loadfig(cell2mat(mFiles(sample_index(i))));  
@@ -36,9 +37,14 @@ for i = 1 : sample_count
 %     bw3 = imdilate(bw3, B);
 %     bw3 = imdilate(bw3, B);
 %     bw3 = imdilate(bw3, B);
-    imagesc(bw3);
+%     bw3 = bwmorph(bw3, 'skel', inf);
+%     imagesc(bw3);
+    imshow(~bw3);
     subplot(sample_count, 2, i * 2);  
-    image(bw2);
+%     image(bw2);
+    bw3 = link_gap(bw3, 2);
+    imshow(~bw3);
+%     image(cout);
 %     subplot(sample_count, 3, i * 3);
 %     hist_im = imhist(sample_images(i).image);
 end
