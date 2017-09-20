@@ -1,9 +1,9 @@
-function bw2 = delete_holes(bw, outer)
+function [bw2, delete_bw] = delete_holes(bw, outer)
 
 [m, n] = find(bw > 80);
 [height, width] = size(bw);
 bw2 = bw;
-
+bw_delete = zeros(height, width);
 for i = 1 : length(n)
     startY = m(i) - 2;
     if startY < 1
@@ -25,6 +25,7 @@ for i = 1 : length(n)
     threshold = sum(outer(startY:endY, startX:endX));
     if threshold == 0
         bw2(m(i), n(i)) = 0;
+        bw_delete(m(i), n(i)) = 1;
     end
 end
 % figure(2)
