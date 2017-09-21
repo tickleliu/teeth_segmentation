@@ -1,4 +1,5 @@
 function bw_s = sample(bw, outer)
+%select the region near the border
 [height, width] = size(bw);
 bw_s = zeros(height, width);
 L = bwlabel(bw, 4);

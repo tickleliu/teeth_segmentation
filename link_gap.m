@@ -5,7 +5,7 @@ function bw_l = link_gap(bw, gap_size)
 % left, right, up, down
 L = bwlabel(bw, 8);
 S = regionprops(L, 'area');
-L = ismember(L, find([S.Area] >= 30));
+L = ismember(L, find([S.Area] >= 20));
 L(L~=0) = 1;
 bw = bw .* L;
 [m, n] = find(bw ~= 0);
@@ -45,38 +45,38 @@ for i = 1 : length(m)
         end
     end
     
-    %up
-    if m(i) - gap_size < 1 || n(i) - gap_size < 1 ||n(i) + gap_size > width
-        continue
-    end
-    if sum(bw(m(i) - 1, n(i) - 1: n(i) + 1)) == 0
-        [pm, pn] = find(bw(m(i) - gap_size : m(i) - 1,...
-            n(i) - floor(gap_size / 2) : n(i) + floor(gap_size / 2)) ~= 0);
-        pm = pm + m(i) - gap_size - 1;
-        pn = pn + n(i) - floor(gap_size / 2) - 1;
-        if ~isempty(pm)
-            index  = min_dist_p(m(i), n(i), pm, pn);
-            [psm, psn] = fill2points(pm(index), pn(index), m(i), n(i));
-            bw(psm, psn) = 1;
-        end
-    end   
-    
-    
-    %down
-    if m(i) + gap_size > height || n(i) - gap_size < 1 ||n(i) + gap_size > width
-        continue
-    end
-    if sum(bw(m(i) + 1, n(i) - 1: n(i) + 1)) == 0
-        [pm, pn] = find(bw(m(i) + 1  : m(i) + gap_size,...
-            n(i) - floor(gap_size / 2) : n(i) + floor(gap_size / 2)) ~= 0);
-        pm = pm + m(i) + 1 - 1;
-        pn = pn + n(i) - floor(gap_size / 2) - 1;
-        if ~isempty(pm)
-            index  = min_dist_p(m(i), n(i), pm, pn);
-            [psm, psn] = fill2points(pm(index), pn(index), m(i), n(i));
-            bw(psm, psn) = 1;
-        end
-    end   
+%     %up
+%     if m(i) - gap_size < 1 || n(i) - gap_size < 1 ||n(i) + gap_size > width
+%         continue
+%     end
+%     if sum(bw(m(i) - 1, n(i) - 1: n(i) + 1)) == 0
+%         [pm, pn] = find(bw(m(i) - gap_size : m(i) - 1,...
+%             n(i) - floor(gap_size / 2) : n(i) + floor(gap_size / 2)) ~= 0);
+%         pm = pm + m(i) - gap_size - 1;
+%         pn = pn + n(i) - floor(gap_size / 2) - 1;
+%         if ~isempty(pm)
+%             index  = min_dist_p(m(i), n(i), pm, pn);
+%             [psm, psn] = fill2points(pm(index), pn(index), m(i), n(i));
+%             bw(psm, psn) = 1;
+%         end
+%     end   
+%     
+%     
+%     %down
+%     if m(i) + gap_size > height || n(i) - gap_size < 1 ||n(i) + gap_size > width
+%         continue
+%     end
+%     if sum(bw(m(i) + 1, n(i) - 1: n(i) + 1)) == 0
+%         [pm, pn] = find(bw(m(i) + 1  : m(i) + gap_size,...
+%             n(i) - floor(gap_size / 2) : n(i) + floor(gap_size / 2)) ~= 0);
+%         pm = pm + m(i) + 1 - 1;
+%         pn = pn + n(i) - floor(gap_size / 2) - 1;
+%         if ~isempty(pm)
+%             index  = min_dist_p(m(i), n(i), pm, pn);
+%             [psm, psn] = fill2points(pm(index), pn(index), m(i), n(i));
+%             bw(psm, psn) = 1;
+%         end
+%     end   
 end
 bw_l = bw;
 end
