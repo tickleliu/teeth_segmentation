@@ -1,5 +1,6 @@
 function region_info = region_info_calc(L)
-
+% calc the linked region infos
+% have area, size
 region_count = max(max(L));
 region_info = {};
 

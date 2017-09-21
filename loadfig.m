@@ -1,5 +1,5 @@
 function [image] = loadfig(path)
-%load fig file to matrix
+%load fig file to a matrix
 h=open(path);
 a=get(h);
 b=get(a.Children);

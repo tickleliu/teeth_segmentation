@@ -1,4 +1,5 @@
 function [image_out] = outer(in)
+%% calc the range file outer bound
 image_out = in;
 
 image_out(image_out ~= 0) = 1;

@@ -1,3 +1,4 @@
+%main file for pre process the stl model
 clc;close all;clear all;
 
 %% The directory of your files

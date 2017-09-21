@@ -1,4 +1,7 @@
 function saveStlFile(path, intor, faces, vertexs, face_normals)
+%save the memory mesh info to a temp file, then use the java code change
+%the tmp file to a stl file for efficiency
+
 fid = fopen(path, 'w');
 % for i = 1 : 80
 %     count = fwrite(fid, ' ', 'char');
