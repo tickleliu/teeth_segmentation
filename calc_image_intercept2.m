@@ -141,11 +141,9 @@ for ii = 1 : empty_pixels_count
         if have_cross == 1  %����н��㣬��ô��ݸ���Ԫ��������Ȩ����ʵ�ʵ��?
             if int_image_range(j, i) == 0
                 int_image_range(j, i) = distance([x,y,z], cross_point);
-                int_image_range_index(j, i) = proj_image_index(face_index);
             else
                 if int_image_range(j, i) > distance([x,y,z], cross_point)
                     int_image_range(j, i) = distance([x,y,z], cross_point);
-                    int_image_range_index(j, i) = proj_image_index(face_index);
                 end
             end
         end

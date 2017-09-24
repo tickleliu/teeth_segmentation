@@ -5,7 +5,6 @@ bw_s = zeros(height, width);
 L = bwlabel(bw, 4);
 [m, n] = find(bw ~= 0);
 for i = min(n) : max(n)
-% for i = 513
     y_link_count = 0;
     border_start = min(find(bw(:, i) ~= 0));%from border,first calc border width
     border_end = y_link(bw, i, border_start);

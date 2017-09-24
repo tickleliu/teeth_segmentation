@@ -1,5 +1,4 @@
 function bw_l = link_gap(bw, gap_size)
-
 % if linked region gap < gap_size, then the region will be linked together
 % from four direction to find if the region could have a linked neighbour:
 % left, right, up, down

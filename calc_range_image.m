@@ -2,8 +2,8 @@ function [image_range, image_range_index] = calc_range_image(faces, vertexs, f, 
 
 %��ּ������߳��ȣ�������߳��ȼ���image���ȷ�Χ
 % ���Ǽ�������1��xתΪ����΢Ԫ
-% 2�ǵ���Ҷȷֲ�ͼ��
-% 3�ǰ�û��ֵ�ò��������
+% 2�ǵ���Ҷȷֲ�ͼ��?
+% 3�ǰ�û��ֵ�ò��������?
 
 center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
 center_points(:,4) = 1 : length(center_points);
@@ -44,7 +44,7 @@ maxZ = max(center_points(:,3));
 minZ = level_plane;
 heighth = floor(maxZ - level_plane) + 2;
 image_range = zeros(width * scale, heighth * scale);
-image_range_index = zeros(width * scale, heighth * scale);
+image_range_index = zeros(length(faces), 2);
 
 [proj_image, vertexs_map_image] = calcDepth(faces, vertexs, f, level_plane);
 proj_image = sortrows(proj_image, 1);
@@ -120,7 +120,7 @@ for i = 1 : length(proj_image)
     else
         image_range(scale_x_index, y) = min(proj_image(i,3), image_range(scale_x_index, y));
     end
-    image_range_index(scale_x_index, y) = proj_image(i,4);
+    image_range_index(proj_image(i, 4), 1:2) = [scale_x_index, y];
 end
 % image_range = fillhole(image_range, scale);
 % figure(4)
