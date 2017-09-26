@@ -2,8 +2,8 @@ function [image_range, image_range_index] = calc_range_image(faces, vertexs, f, 
 
 %��ּ������߳��ȣ�������߳��ȼ���image���ȷ�Χ
 % ���Ǽ�������1��xתΪ����΢Ԫ
-% 2�ǵ���Ҷȷֲ�ͼ��?
-% 3�ǰ�û��ֵ�ò��������?
+% 2�ǵ���Ҷȷֲ�ͼ��?
+% 3�ǰ�û��ֵ�ò��������?
 
 center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
 center_points(:,4) = 1 : length(center_points);
@@ -96,9 +96,7 @@ end
 
 scale_x_index = 1;
 for i = 1 : length(proj_image)
-    if proj_image(i, 3) > 20
-        continue
-    end
+
     x = floor((proj_image(i,1) - minX) * scale);
     y = floor((proj_image(i,2) - minZ) * scale);
     
@@ -115,12 +113,16 @@ for i = 1 : length(proj_image)
     if scale_x_index > length(scale_x)
         continue
     end
+    image_range_index(proj_image(i, 4), 1:2) = [scale_x_index, y];
+    if proj_image(i, 3) > 20
+        continue
+    end
     if image_range(scale_x_index, y) ==0
         image_range(scale_x_index, y) = proj_image(i,3);
     else
         image_range(scale_x_index, y) = min(proj_image(i,3), image_range(scale_x_index, y));
     end
-    image_range_index(proj_image(i, 4), 1:2) = [scale_x_index, y];
+    
 end
 % image_range = fillhole(image_range, scale);
 % figure(4)
