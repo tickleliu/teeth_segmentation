@@ -59,13 +59,15 @@ width = [];
     level_plane = minZ + (maxZ - minZ) * 0.2;
     [f2] = fitContourByConvhull2(vertexs, faces, level_plane);
     f_in = inner_contour_fit(faces, vertexs, f2, level_plane);
+
     faces = inner_outer_face_filter(faces, vertexs, f2, f_in, level_plane);
     normals_f = zeros(size(faces));
-        
+       
     % for display result, save the left face to a stl file
     paths = regexp(cell2mat(mFiles(i)), '[\\/]', 'split');
     filename = [cell2mat(paths(end-1)), '@' , cell2mat(paths(end))];
     filename = filename(1:end-3);
+
     [int_image_range, int_image_range_index] = calc_image_intercept2(faces, vertexs, f2, minZ, scale);
     [int_image_range_in, int_image_range_index_in] = calc_image_intercept2(faces, vertexs, f_in, minZ, scale);
 
