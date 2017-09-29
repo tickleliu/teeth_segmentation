@@ -1,17 +1,17 @@
 function [proj_image, vertexs_map_image] = calcDepth(faces, vertexs, f, level_plane)
-%¼ÆËãmeshÖÐµãµ½Í¶Ó°Ãæ¾àÀë
+%ï¿½ï¿½ï¿½ï¿½meshï¿½Ðµãµ½Í¶Ó°ï¿½ï¿½ï¿½ï¿½ï¿½
 % calc the vertex deepth
 % calc the tangent point
-%ÇÐµã·½³Ì f(x)f'(x)-y0f'(x)+x-x0=0;
+%ï¿½Ðµã·½ï¿½ï¿½ f(x)f'(x)-y0f'(x)+x-x0=0;
 x = [length(f)-1:-1:1];
 f_derv = f(1:end-1).*x;%f'(x)
 f_f_derv = conv(f,f_derv);%f(x)f'(x)
 %genelize the range map
-%¼ÆËãÃ¿¸ö¶¥µã£¨vertex£©Ó³Éäµ½×îÖÕÍ¼ÖÐµÄ×ø±ê
+%ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ã£¨vertexï¿½ï¿½Ó³ï¿½äµ½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½Ðµï¿½ï¿½ï¿½ï¿½
 disp 'calculate the vertexs projection'
 
 vertexs_map_image = zeros(length(vertexs),4);
-res_threshold = 10;
+res_threshold = 30;
 for i = 1 : length(vertexs)
     vertexs_map_image(i, 4) = i;
     if vertexs(i, 3) < level_plane
@@ -31,7 +31,7 @@ for i = 1 : length(vertexs)
     end
 end
 
-%¼ÆËãÃ¿¸öÈý½ÇÃæÔªÓ³Éäµ½×îÖÕÍ¼ÏñÖÐµÄ×ø±ê
+%ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÔªÓ³ï¿½äµ½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½
 disp 'calculate the faces projection'
 center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
 % for i = 1 : length(faces)
@@ -40,10 +40,10 @@ center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces
 %         i
 %     end
 % end
-proj_image = zeros(length(faces),4);%1 Ó³Éäµ½ÇúÏßµÄx×ø±ê£¬2z×ø±ê£¬3µ½ÄâºÏÇúÏß¾àÀë£¬4ÃæÔªindex
+proj_image = zeros(length(faces),4);%1 Ó³ï¿½äµ½ï¿½ï¿½ï¿½ßµï¿½xï¿½ï¿½ê£¬2zï¿½ï¿½ê£¬3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¾ï¿½ï¿½ë£¬4ï¿½ï¿½Ôªindex
 proj_image_length = 1;
 for i = 1 : length(faces)
-    if center_points(i, 3) < level_plane %Ö»¿¼ÂÇË®Æ½ÏßÒÔÉÏµÄÃæÔª
+    if center_points(i, 3) < level_plane %Ö»ï¿½ï¿½ï¿½ï¿½Ë®Æ½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½Ôª
         continue;
     end
     xy = center_points(i, 1:2);

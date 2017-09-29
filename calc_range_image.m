@@ -103,7 +103,6 @@ for i = 1 : length(proj_image)
     if (x < 1 || x > width * scale || y < 1 || y > heighth * scale)
         continue
     end
-    
     while scale_x_index <= length(scale_x)
         if scale_x(scale_x_index) > proj_image(i,1)
             break;

@@ -76,7 +76,8 @@ width = [];
     figure(1)
     image(mask_image);
     mask_image = rot90(rot90(rot90(mask_image)));
-    
+    a = strel('disk',4);
+    mask_image = imdilate(mask_image, a);
     teeth_face = zeros(size(faces));
     teeth_normal = zeros(size(faces));
     teeth_face_count = 0;
