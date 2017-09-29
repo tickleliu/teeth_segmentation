@@ -44,7 +44,8 @@ maxZ = max(center_points(:,3));
 minZ = level_plane;
 heighth = floor(maxZ - level_plane) + 2;
 image_range = zeros(width * scale, heighth * scale);
-image_range_index = zeros(length(faces), 2);
+image_range_index = zeros(length(faces), 3);
+image_range_index(:,3) = 1000;
 
 [proj_image, vertexs_map_image] = calcDepth(faces, vertexs, f, level_plane);
 proj_image = sortrows(proj_image, 1);
@@ -113,6 +114,7 @@ for i = 1 : length(proj_image)
         continue
     end
     image_range_index(proj_image(i, 4), 1:2) = [scale_x_index, y];
+    image_range_index(proj_image(i, 4), 3) = proj_image(i, 3);
     if proj_image(i, 3) > 20
         continue
     end

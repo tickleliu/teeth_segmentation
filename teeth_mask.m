@@ -71,12 +71,12 @@ for j = start_x : end_x
     end
 end
 
-L = render_link_image(L_s);
-
-for j = start_x : end_x
-    L(floor(yi(j)), j, 1) = L(floor(yi(j)), j ,1) + 10;
-    L(upborder(j) + 1, j, 1) = L(upborder(j) + 1, j ,1) + 10;
-end
+% L = render_link_image(L_s);
+% 
+% for j = start_x : end_x
+%     L(floor(yi(j)), j, 1) = L(floor(yi(j)), j ,1) + 10;
+%     L(upborder(j) + 1, j, 1) = L(upborder(j) + 1, j ,1) + 10;
+% end
 
 
 mask_image = zeros(size(image));

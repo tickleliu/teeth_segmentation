@@ -30,7 +30,7 @@ height = [];
 width = [];
 
 % for i = 1 : modelCount
-    for i = 3
+    for i = 1
     i
     fprintf('calc the range image for %s\n', cell2mat(mFiles(i)));
     
@@ -58,13 +58,17 @@ width = [];
     meanZ = mean(faces_left(:, 3));
     level_plane = minZ + (maxZ - minZ) * 0.2;
     [f2] = fitContourByConvhull2(vertexs, faces, level_plane);
-    
+    f_in = inner_contour_fit(faces, vertexs, f2, level_plane);
+    faces = inner_outer_face_filter(faces, vertexs, f2, f_in, level_plane);
+    normals_f = zeros(size(faces));
+        
     % for display result, save the left face to a stl file
     paths = regexp(cell2mat(mFiles(i)), '[\\/]', 'split');
     filename = [cell2mat(paths(end-1)), '@' , cell2mat(paths(end))];
     filename = filename(1:end-3);
-%     saveStlFile([int2str(i), '@', filename, 'tmp'], '', faces, vertexs, normals);
     [int_image_range, int_image_range_index] = calc_image_intercept2(faces, vertexs, f2, minZ, scale);
+    [int_image_range_in, int_image_range_index_in] = calc_image_intercept2(faces, vertexs, f_in, minZ, scale);
+
     model(i).range_index = int_image_range_index;
     model(i).fig = [int2str(i), '@', filename, '.fig'];
 %     g = figure(1);
@@ -72,12 +76,16 @@ width = [];
 %     saveas(g, [int2str(i), '@', filename, '.fig']);
     fprintf('finished the image for %s\n', cell2mat(mFiles(i)));
     int_image_range = rot90(int_image_range);
+    int_image_range_in = rot90(int_image_range_in);
     mask_image = teeth_mask(int_image_range);
+    mask_image_in = teeth_mask(int_image_range_in);
     figure(1)
     image(mask_image);
     mask_image = rot90(rot90(rot90(mask_image)));
-    a = strel('disk',4);
+    mask_image_in = rot90(rot90(rot90(mask_image_in)));
+    a = strel('disk',5);
     mask_image = imdilate(mask_image, a);
+    mask_image_in = imdilate(mask_image_in, a);
     teeth_face = zeros(size(faces));
     teeth_normal = zeros(size(faces));
     teeth_face_count = 0;
@@ -89,10 +97,28 @@ width = [];
         end
         
         if mask_image(int_image_range_index(j,1),int_image_range_index(j,2)) ...
-                ~= 0
+                ~= 0 && mask_image_in(int_image_range_index_in(j,1),int_image_range_index_in(j,2)) ...
+                ~= 0            
             teeth_face_count = teeth_face_count + 1;
             teeth_face(teeth_face_count, : ) = faces(j, :); 
             teeth_normal(teeth_face_count, : ) = normals(j, :);
+        elseif mask_image(int_image_range_index(j,1),int_image_range_index(j,2)) ...
+                ~= 0 && mask_image_in(int_image_range_index_in(j,1),int_image_range_index_in(j,2)) ...
+                == 0  
+            if int_image_range_index(j,3) < int_image_range_index_in(j,3)
+                teeth_face_count = teeth_face_count + 1;
+                teeth_face(teeth_face_count, : ) = faces(j, :);
+                teeth_normal(teeth_face_count, : ) = normals(j, :);
+            end
+            
+        elseif mask_image(int_image_range_index(j,1),int_image_range_index(j,2)) ...
+                == 0 && mask_image_in(int_image_range_index_in(j,1),int_image_range_index_in(j,2)) ...
+                ~= 0 
+            if int_image_range_index(j,3) > int_image_range_index_in(j,3)
+                teeth_face_count = teeth_face_count + 1;
+                teeth_face(teeth_face_count, : ) = faces(j, :);
+                teeth_normal(teeth_face_count, : ) = normals(j, :);
+            end
         end
     end
     teeth_face = teeth_face(1:teeth_face_count,:);  
