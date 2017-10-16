@@ -1,16 +1,17 @@
 function [int_image_range, int_image_range_index] = calc_image_intercept(faces, vertexs, f, level_plane, scale)
-%calculate the teeth panoramic projection image
+%calculate the teeth projection image
 %f: the 4 degree polynomial coefficient
 
+%use center point to depict a face, 4 is the face index
 center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
 center_points(:,4) = 1 : length(center_points);
-%��Ҫ��������?
+%only use the face upper than level_plane
 proj_image = center_points(find(center_points(:,3) > level_plane), :);
 
+%% find the image width,use minX, maxX
 minX = min(center_points(:,1));
 maxX = max(center_points(:,1));
 midX = (minX + maxX) / 2;
-
 minY = min(center_points(:,2));
 minY_X = -10000;
 maxY_X = 10000;
@@ -30,10 +31,12 @@ end
 minX = min(minX, minY_X) - 5;
 maxX = max(maxX, maxY_X) + 5;
 
+% convert the x axis to poly axis, use dx, dy integral
 x0 = [minX:1/scale:maxX - 1];
 y0 = polyval(f,x0);
 width = floor(sum(sqrt(diff(x0).^2 + diff(y0).^2)));
 
+%% calc the image height
 maxZ = max(vertexs(:,3));
 heighth = floor(maxZ - level_plane) + 2;
 
@@ -57,14 +60,15 @@ end
 scale_y = polyval(f, scale_x);
 
 
-%����ÿ�������Ԫӳ�䵽����ͼ���е����
+%% result
+%projection image, and the face to pixel mapping index
 int_image_range = zeros(width * scale, heighth * scale);
 int_image_range_index = zeros(width * scale, heighth * scale);
 
-%��Ч���������?
+%% 
 proj_image_center = center_points(proj_image(:,4),:);
 proj_image_index = proj_image(:,4);
-%ʹ��kd tree�����ٽ��?
+%create a kd-tree to speed up the nearest point search
 Mdl = createns(proj_image_center(:,1:1:3),'NSMethod','kdtree','Distance','euclidean');
 
 
@@ -72,11 +76,11 @@ Mdl = createns(proj_image_center(:,1:1:3),'NSMethod','kdtree','Distance','euclid
 for i = 1 : heighth * scale
     i
     for j = 1 : width * scale
-        %���ص���ͶӰ������ά�ռ����ʵ���
+        %mapping the image pixel x,y to a stl mesh model coordinate x', y'
         x = scale_x(j);y = scale_y(j);z =  i / scale + level_plane;
         normal = scale_normal(j,:);
         
-        %���ص���x-z, y-zƽ����radius�����ڵ��ھ���Ԫ
+        
         idx_pre = [];idx_ori = [];idx = []; step = 1;radius = 5;%�����뾶
         while(step < 2)
 

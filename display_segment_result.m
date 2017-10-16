@@ -1,3 +1,5 @@
+%% display the teeth segmentation result in matlab
+%% use different color( 0 < c < 1) to display result
 [vertexs, faces, normals] = readmodel('C:\Users\think\Desktop\fig\fig\Dent1-base.dat');
 [vertexs1, faces1, normals1] = readmodel('C:\Users\think\Desktop\fig\fig\Dent1-Intact.dat');
 seginfo1 = zeros(length(faces1),1) + 0.5;

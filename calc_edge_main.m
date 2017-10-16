@@ -1,5 +1,5 @@
-% main file to calc segmentation teeth
-
+%% main file to calc teeth projection image segmentation
+%% use for test 
 close all; clear all; clc;
 
 %% load files

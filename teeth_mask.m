@@ -14,7 +14,7 @@ bw2(bw2 > edge_threshold) = 30;
 % the teeth edge near the up range image border and the second near
 % edge will be selected
 image_out = outer(image);
-bw3 = sample(bw2, image_out);
+bw3 = sample(bw2);
 bw3 = link_gap(bw3, 5);
 
 % teeth linked region

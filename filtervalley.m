@@ -1,5 +1,5 @@
 function int_image_range2 = filtervalley(int_image_range)
-% use log to calc edge
+% use 5 * 5 Laplace of Gaussion(LoG) to calc edge
 [m, n] = size(int_image_range);
 L_o_G = [-2 -4 -4 -4 -2;
        -4 0 8 0 -4;

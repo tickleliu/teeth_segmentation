@@ -1,4 +1,6 @@
 function bw = auto_edge(image, minIO, maxIO)
+% search the edge between minIO, maxIO
+% not used 
 % make the i / o = [3.9, 4.1]
 threshold = 0.01;
 threshold_step = 0.001;

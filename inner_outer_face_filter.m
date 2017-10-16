@@ -1,5 +1,10 @@
 function faces_f = inner_outer_face_filter(faces, vertexs, f_outer, f_inner, level_plane)
-
+% filt the faces, select the faces which between the f_outer and
+% f_inner
+% faces: the stl model faces, stored in the triple vertexs index
+% vertexs: vertexs coordinate(x, y, z)
+% f_outer, f_inner: outer and inner plane
+% level_plane: only use the faces upper than level_plane
 
 center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
 center_points(:,4) = 1 : length(center_points);

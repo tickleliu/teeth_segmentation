@@ -1,12 +1,13 @@
 function [int_image_range, int_image_range_index] = calc_image_intercept2(faces, vertexs, f, level_plane, scale)
 %calculate the teeth panoramic projection image
 %f: the 4 degree polynomial coefficient
-
+%use center point to depict a face, 4 is the face index
 center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
 center_points(:,4) = 1 : length(center_points);
-%��Ҫ��������?
+%only use the face upper than level_plane
 proj_image = center_points(center_points(:,3) > level_plane, :);
 
+%% find the image width,use minX, maxX
 minX = min(center_points(:,1));
 maxX = max(center_points(:,1));
 midX = (minX + maxX) / 2;
@@ -39,10 +40,12 @@ if maxX > 100
     maxX = max(center_points(:,1)) + 10;
 end
 
+% convert the x axis to poly axis, use dx, dy integral
 x0 = minX:1/scale:maxX - 1;
 y0 = polyval(f,x0);
 width = floor(sum(sqrt(diff(x0).^2 + diff(y0).^2)));
 
+%% calc the image height
 maxZ = max(center_points(:,3));
 heighth = floor(maxZ - level_plane) + 2;
 
@@ -66,10 +69,18 @@ end
 scale_y = polyval(f, scale_x);
 
 
-%����ÿ�������Ԫӳ�䵽����ͼ���е����
+%% result
+%projection image, and the face to pixel mapping index
+% use a optimization algorithm
+% step 1: map the center points of faces and vertexs into the result image
+% step 2: find the outer border of mapping image
+% step 3: select the empty hole inner the outer border into a list
+% step 4: fill the empty hole use 'triple area method'(if a line cross a triangle)
+
+% step 1
 [int_image_range, int_image_range_index] = calc_range_image(faces, vertexs, f, level_plane, scale);
-% int_image_range = zeros(width * scale, heighth * scale);
-% int_image_range_index = zeros(width * scale, heighth * scale);
+
+% step 2
 width_start_index = zeros(scale *width,1);
 width_end_index = zeros(scale *width,1);
 for i = 1 : scale * width
@@ -82,9 +93,10 @@ for i = 1 : scale * width
         width_end_index(i) = heighth_start_index(1);
     end
 end
+
+% step 3
 empty_pixels = zeros(scale * width * heighth * scale,2);
 empty_pixels_count = 0;
-
 for i = 1 : scale * width
     for j = width_end_index(i) : width_start_index(i)
         if int_image_range(i,j) == 0
@@ -94,10 +106,11 @@ for i = 1 : scale * width
     end
 end
 empty_pixels = empty_pixels(1:empty_pixels_count,:);
-%��Ч���������?
+
+% step 4
 proj_image_center = center_points(proj_image(:,4),:);
 proj_image_index = proj_image(:,4);
-%ʹ��kd tree�����ٽ��?
+% use kd-tree to speed up the nearest point search
 Mdl = createns(proj_image_center(:,1:1:3),'NSMethod','kdtree','Distance','euclidean');
 % g = f - [0 0 0 0 5];
 disp(empty_pixels_count);
@@ -108,12 +121,14 @@ for ii = 1 : empty_pixels_count
     end
     j = empty_pixels(ii,1);
     i = empty_pixels(ii,2);
-    %���ص���ͶӰ������ά�ռ����ʵ���
+    % mapping the image pixel x,y to a stl mesh model coordinate x', y'
     x = scale_x(j);y = scale_y(j);z =  i / scale + level_plane;
     normal = scale_normal(j,:);
     
     idx = cell2mat(rangesearch(Mdl,[x, y, z], radius));    
-    %����knn�������ĵ��ƽ�淨�ߵļн�?
+    
+    % calc the angle between projection plane normal and the two point link
+    % line, only use the small angle
     center_x = [x y z] - center_points(proj_image_index(idx),1:3);
     arc = acos(center_x * normal' ./ sum(abs(center_x).^2,2).^(1/2));
     arc_index = [arc, (1:length(arc))'];
@@ -125,16 +140,12 @@ for ii = 1 : empty_pixels_count
         continue
     end
     
-    %�жϸõ��Ƿ���������Ԫ��ĳһ���н���
+    % use the triangle cross method to calc the mapping value
     have_cross = 0;
     for face_index = idx
         linepoint1 = [x,y,z]; %��ʼ��
         linepoint2 = [x,y,z] + 5 .* normal; %ֱ���ط��߷�����һ��
         vertexpoint = vertexs(faces(proj_image_index(face_index),1:3), :); %�����Ԫ��?
-        
-%         if length(vertexpoint) ~=3
-%             continue
-%         end
         
         [cross_point, have_cross] = validPoint(linepoint1,linepoint2,... %���㽻��
             vertexpoint(1,:),vertexpoint(2,:),vertexpoint(3,:));

@@ -1,5 +1,5 @@
 function f_in = inner_contour_fit(faces, vertexs, f, level_plane)
-%calculate the teeth panoramic projection image
+%calculate the teeth inner projection image
 %f: the 4 degree polynomial coefficient
 
 center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;

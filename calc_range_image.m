@@ -1,9 +1,7 @@
 function [image_range, image_range_index] = calc_range_image(faces, vertexs, f, level_plane, scale)
-
-%��ּ������߳��ȣ�������߳��ȼ���image���ȷ�Χ
-% ���Ǽ�������1��xתΪ����΢Ԫ
-% 2�ǵ���Ҷȷֲ�ͼ��?
-% 3�ǰ�û��ֵ�ò��������?
+% map the center points of faces and vertexs into the result image
+% return the mapping image, and the mapping index between stl mesh model
+% and the image pixel coordinate
 
 center_points = (vertexs(faces(:,1), :) + vertexs(faces(:,2), :) + vertexs(faces(:,3), :)) ./3;
 center_points(:,4) = 1 : length(center_points);
